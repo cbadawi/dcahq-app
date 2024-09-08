@@ -1,0 +1,75 @@
+import React, { useEffect, useRef, useState } from "react"
+import { Box } from "styled-system/jsx"
+
+interface DropdownProps {
+  options: string[]
+  onSelect: (option: any) => void
+  isDropdownOpen: boolean
+  setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Dropdown: React.FC<DropdownProps> = ({
+  options,
+  onSelect,
+  isDropdownOpen,
+  setIsDropdownOpen
+}) => {
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef?.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsDropdownOpen(false)
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setIsDropdownOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+  if (!isDropdownOpen) return null
+  return (
+    <Box
+      ref={dropdownRef}
+      position="absolute"
+      top="100%"
+      left="0"
+      zIndex="1"
+      bg="#29303F"
+      borderRadius="md"
+      boxShadow="md"
+      width="100%"
+      mt="0.25rem" // Reduced margin for smaller spacing
+    >
+      {options.map(option => (
+        <Box
+          key={option}
+          onClick={() => {
+            onSelect(option)
+            setIsDropdownOpen(false)
+          }}
+          cursor="pointer"
+          p="0.5rem"
+          fontSize="sm"
+          _hover={{ bg: "#1a1b26" }}
+        >
+          {option}
+        </Box>
+      ))}
+    </Box>
+  )
+}
+
+export default Dropdown

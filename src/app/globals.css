@@ -1,0 +1,9 @@
+@layer reset, base, tokens, recipes, utilities;
+
+.bg-custom-dark {
+  background-color: #010212;
+}
+
+body {
+  color: #ffffff;
+}

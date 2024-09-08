@@ -1,0 +1,34 @@
+import "./globals.css"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import Navbar from "./components/navigation/Navbar"
+import { UserProvider } from "./contexts/UserProvider"
+
+const inter = Inter({ subsets: ["latin"] })
+
+export const metadata: Metadata = {
+  title: "DCA",
+  description:
+    "Dollar Cost Average (DCA) Crypto. Stx, Btc, memecoins and Runes."
+}
+
+export default function RootLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en">
+      {/* <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head> */}
+      <body className={`bg-custom-dark ${inter.className}`}>
+        <UserProvider>
+          <Navbar />
+          {children}
+        </UserProvider>
+      </body>
+    </html>
+  )
+}
