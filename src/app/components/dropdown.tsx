@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Box } from "styled-system/jsx"
+import { tokenMap, Tokens } from "../common/helpers"
 
 interface DropdownProps {
-  options: string[]
+  options: Tokens[]
   onSelect: (option: any) => void
   isDropdownOpen: boolean
   setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -53,9 +54,9 @@ const Dropdown: React.FC<DropdownProps> = ({
       width="100%"
       mt="0.25rem" // Reduced margin for smaller spacing
     >
-      {options.map(option => (
+      {options.map((option, index) => (
         <Box
-          key={option}
+          key={option + index}
           onClick={() => {
             onSelect(option)
             setIsDropdownOpen(false)
@@ -63,9 +64,9 @@ const Dropdown: React.FC<DropdownProps> = ({
           cursor="pointer"
           p="0.5rem"
           fontSize="sm"
-          _hover={{ bg: "#1a1b26" }}
+          _hover={{ bg: "#1a1b26", color: "orange" }}
         >
-          {option}
+          {tokenMap[option].displayName}
         </Box>
       ))}
     </Box>

@@ -3,7 +3,7 @@ import DownChevron from "../icons/down-chevron"
 import { Box, Flex, HStack, VStack } from "@/styled-system/jsx"
 import { css } from "@/styled-system/css"
 import { prettyPrice } from "../../common/prettyCV"
-import { Tokens } from "../../common/helpers"
+import { tokenMap, Tokens } from "../../common/helpers"
 
 const Customize = ({
   setMinPrice,
@@ -74,7 +74,8 @@ const Customize = ({
               width="100%"
             >
               <label style={{ fontSize: "medium" }}>
-                {targetToken}/{sourceToken} price
+                {tokenMap[targetToken].displayName}/
+                {tokenMap[sourceToken].displayName} price
               </label>
               <input
                 className={css({
@@ -85,9 +86,10 @@ const Customize = ({
                   textAlign: "right",
                   bg: "transparent"
                 })}
-                defaultValue={prettyPrice(targetToSourcePrice)}
+                value={prettyPrice(targetToSourcePrice)}
                 type="text"
                 inputMode="decimal"
+                readOnly={true}
               />
             </Box>
             <HStack justifyContent="space-between" width="100%">

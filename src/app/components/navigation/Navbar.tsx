@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { css } from "../../../../styled-system/css"
 import { Flex } from "../../../../styled-system/jsx"
 import ConnectWallet from "./ConnectWallet"
@@ -22,11 +23,21 @@ const Navbar = () => {
           fontSize: "xl",
           color: "white",
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
+          _hover: {
+            bg: "#15161f",
+            color: "orange"
+          }
         })}
       >
         <Flex gap={3} alignItems="center">
-          {/* <Image src="/favicon.ico" width={30} height={40} alt="Logo" /> */}
+          <Image
+            src="/favicon.ico"
+            width={30}
+            height={40}
+            style={{ width: "auto" }}
+            alt="Logo"
+          />
           <Link href="/">DCA-HQ</Link>
         </Flex>
       </div>
@@ -39,6 +50,25 @@ const Navbar = () => {
           margin: 0
         })}
       >
+        <li>
+          <Link
+            href="/portfolio"
+            className={css({
+              color: "white",
+              padding: "0.25rem 1rem",
+              border: "2px solid transparent",
+              transition: "all 0.3s ease",
+              _hover: {
+                borderRadius: "12px",
+                bg: "#15161f",
+                color: "orange",
+                borderColor: "lightgrey"
+              }
+            })}
+          >
+            Portfolio
+          </Link>
+        </li>
         <li>
           <Link
             href="/"
@@ -56,26 +86,6 @@ const Navbar = () => {
             })}
           >
             Strategies
-            <Soon />
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/"
-            className={css({
-              color: "white",
-              padding: "0.25rem 1rem",
-              border: "2px solid transparent",
-              transition: "all 0.3s ease",
-              _hover: {
-                borderRadius: "12px",
-                bg: "#15161f",
-                color: "orange",
-                borderColor: "lightgrey"
-              }
-            })}
-          >
-            Portfolio
             <Soon />
           </Link>
         </li>

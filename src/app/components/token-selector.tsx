@@ -3,10 +3,11 @@ import { Box, Flex, HStack } from "styled-system/jsx"
 import DownChevron from "./icons/down-chevron"
 import Image from "next/image"
 import Dropdown from "./dropdown"
+import { tokenMap, Tokens } from "../common/helpers"
 
 interface TokenSelectorProps {
-  options: string[]
-  selectedOption: string
+  options: Tokens[]
+  selectedOption: Tokens
   onSelect: (option: any) => void
   imagePath?: string
 }
@@ -46,7 +47,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
             <Image src={imagePath} width={20} height={20} alt="token uri" />
           )}
 
-          {selectedOption}
+          {tokenMap[selectedOption].displayName}
         </HStack>
         <DownChevron dimension="35px" color="white" />
       </Flex>

@@ -1,10 +1,11 @@
 import { StacksMainnet } from "@stacks/network"
-import React from "react"
+import React, { useState } from "react"
 import { createDCA } from "../common/functionCalls/dca/createDca"
 import { tokenMap, Tokens } from "../common/helpers"
 import { css } from "@/styled-system/css"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import ConnectWallet from "../components/navigation/ConnectWallet"
 
 const CreateDcaButton = ({
   network,
@@ -25,7 +26,8 @@ const CreateDcaButton = ({
   minPrice: bigint
   maxPrice: bigint
 }) => {
-  if (!network) return
+  const [txID, setTxId] = useState("")
+  if (!network) return <ConnectWallet variant="createDcaButton" />
   const decimals = tokenMap[sourceToken].decimal
   return (
     <>
@@ -51,8 +53,15 @@ const CreateDcaButton = ({
               parseInt(purchaseAmount) * 10 ** decimals,
               network,
               minPrice.toString(),
-              maxPrice.toString()
+              maxPrice.toString(),
+              setTxId
             )
+            toast.success("Click here!" + txID, {
+              position: "top-left",
+              onClick: () => {
+                window.open(`https://stxscan.co/transactions/${txID}`, "_blank")
+              }
+            })
           } catch (error) {
             if (
               error instanceof Error &&

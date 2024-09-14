@@ -20,9 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <head>
+      <head>
         <link rel="icon" href="/favicon.ico" />
-      </head> */}
+      </head>
       <body className={`bg-custom-dark ${inter.className}`}>
         <UserProvider>
           <Navbar />

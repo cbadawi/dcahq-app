@@ -5,23 +5,27 @@ import {
   principalCV,
   ReadOnlyFunctionOptions
 } from "@stacks/transactions"
+import { tokenMap, Tokens } from "../helpers"
+import { isStxOrStxWrapper } from "../filter-tokens"
 
 export async function getBalance(
-  tokenTrait: string,
+  token: Tokens,
   address: string,
   network: StacksMainnet
 ) {
+  if (isStxOrStxWrapper(token)) token = Tokens.ASTX
+
   const functionArgs = [principalCV(address)]
+  const contract = tokenMap[token].contract
   const options: ReadOnlyFunctionOptions = {
-    contractAddress: tokenTrait.split(".")[0],
-    contractName: tokenTrait.split(".")[1],
+    contractAddress: contract.split(".")[0],
+    contractName: contract.split(".")[1],
     functionName: "get-balance",
     functionArgs,
     network,
     senderAddress: address
   }
   const response = await callReadOnlyFunction(options)
-  console.log("getBalance ", { response })
   // @ts-ignore
   const balanceCV = response.value
   const balance = cvToValue(balanceCV)

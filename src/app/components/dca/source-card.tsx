@@ -4,19 +4,34 @@ import React, { useEffect, useState } from "react"
 import { Flex, Box, VStack, HStack } from "@/styled-system/jsx"
 import { UserData } from "@stacks/connect"
 import { getBalance } from "@/src/app/common/functionCalls/getBalance"
-import { sourceTokens, tokenMap, Tokens } from "@/src/app/common/helpers"
-import { getPrice } from "../../common/functionCalls/getPrice"
+import {
+  sourceTokens,
+  targetTokens,
+  tokenMap,
+  Tokens
+} from "@/src/app/common/helpers"
 import { prettyBalance, prettyPrice } from "../../common/prettyCV"
 import { StacksMainnet } from "@stacks/network"
 import InputAmount from "./input-amount"
 import TokenSelector from "../token-selector"
+import {
+  getPrice,
+  getPriceParams,
+  getPriceUsd
+} from "../../common/functionCalls/getPrice"
+import {
+  getAvailableSourceTokens,
+  getAvailableTargetTokens
+} from "../../common/filter-tokens"
 
 interface SourceComponentProps {
-  sourceTokens: Tokens[]
   sourceToken: Tokens
   setSourceToken: React.Dispatch<React.SetStateAction<Tokens>>
+  setTargetToken: React.Dispatch<React.SetStateAction<Tokens>>
+  setTargetTokens: React.Dispatch<React.SetStateAction<Tokens[]>>
   sourceValueUsd: number
   setSourceValueUsd: React.Dispatch<React.SetStateAction<number>>
+  stxPrice: number
   totalAmount: string
   setTotalAmount: (amount: string) => void
   purchaseAmount: string
@@ -35,46 +50,44 @@ const SourceCard = ({
   setPurchaseAmount,
   sourceValueUsd,
   setSourceValueUsd,
-  network
+  network,
+  setTargetTokens,
+  setTargetToken,
+  stxPrice
 }: SourceComponentProps) => {
   const [balance, setBalance] = useState<BigInt>(BigInt(0))
 
-  const sourceTokenContract = tokenMap[sourceToken].contract
   useEffect(() => {
-    console.log("!!! getBalance fetching balance")
     async function fetchBalance() {
-      console.log("!!! getbalance", { user })
       if (!user || !network) return
       const balance = await getBalance(
-        sourceTokenContract,
+        sourceToken,
         user.profile.stxAddress.mainnet,
         network
       )
       setBalance(balance)
     }
     fetchBalance()
-  }, [sourceToken, user])
+    const newTargetTokens = getAvailableTargetTokens(targetTokens, sourceToken)
+    setTargetToken(newTargetTokens[0])
+    setTargetTokens(newTargetTokens)
+  }, [sourceToken.valueOf(), user])
 
   useEffect(() => {
     if (!totalAmount) return
     async function fetchPrice() {
       if (!network) return
-      if (!sourceTokenContract)
-        throw Error("Token contract unknown" + sourceToken)
-      const price = await getPrice(
-        sourceTokenContract,
-        tokenMap[Tokens.sUSDT].contract,
-        network
-      )
+      const priceUsd = await getPriceUsd(sourceToken, network, stxPrice)
       console.log("source-card", {
+        stxPrice,
         totalAmount,
-        price,
-        sourceTokenContract
+        priceUsd,
+        sourceToken
       })
-      setSourceValueUsd(Number(totalAmount) * price)
+      setSourceValueUsd(Number(totalAmount) * priceUsd)
     }
     fetchPrice()
-  }, [sourceToken.valueOf(), totalAmount])
+  }, [sourceToken.valueOf(), totalAmount, stxPrice])
 
   return (
     <Box
@@ -93,21 +106,21 @@ const SourceCard = ({
         >
           <Box m={"1rem"}>
             <TokenSelector
-              options={sourceTokens}
+              options={getAvailableSourceTokens(sourceTokens)}
               selectedOption={sourceToken}
               onSelect={setSourceToken}
               imagePath={tokenMap[sourceToken].image}
             />
           </Box>
           <InputAmount
-            amount={totalAmount}
-            setAmount={setTotalAmount}
-            name="Total Amount"
-          />
-          <InputAmount
             amount={purchaseAmount}
             setAmount={setPurchaseAmount}
             name="Amount per Buy"
+          />
+          <InputAmount
+            amount={totalAmount}
+            setAmount={setTotalAmount}
+            name="Total Amount"
           />
         </Flex>
         <HStack width="100%">

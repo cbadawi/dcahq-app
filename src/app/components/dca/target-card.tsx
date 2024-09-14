@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react"
 import { Box, Flex, VStack } from "@/styled-system/jsx"
 import Dropdown from "../dropdown"
-import { targetTokens, tokenMap, Tokens } from "@/src/app/common/helpers"
+import { tokenMap, Tokens } from "@/src/app/common/helpers"
 import { css } from "@/styled-system/css"
-import { getPrice } from "../../common/functionCalls/getPrice"
+import { getPrice, getPriceUsd } from "../../common/functionCalls/getPrice"
 import { prettyBalance } from "../../common/prettyCV"
 import { StacksMainnet } from "@stacks/network"
 import TokenSelector from "../token-selector"
+import { getPriceParams } from "../../common/functionCalls/getPrice"
 
 interface TargetComponentProps {
   targetToken: Tokens
+  targetTokens: Tokens[]
   sourceToken: Tokens
+  stxPrice: number
   targetPrice: number
   setTargetPrice: (price: number) => void
   sourceValueUsd: number
@@ -21,37 +24,35 @@ interface TargetComponentProps {
 const TargetCard: React.FC<TargetComponentProps> = ({
   sourceToken,
   targetToken,
+  targetTokens,
   sourceValueUsd,
   setTargetToken,
   network,
   targetPrice,
-  setTargetPrice
+  setTargetPrice,
+  stxPrice
 }) => {
   const [targetAmount, setTargetAmount] = useState(0)
 
   useEffect(() => {
     const setAmount = async () => {
       if (!network) return
-      const targetPrice = await getPrice(
-        tokenMap[targetToken].contract,
-        tokenMap[Tokens.sUSDT].contract,
-        network
-      )
-      console.log({ targetPrice })
-      setTargetPrice(targetPrice)
+      const priceUsd = await getPriceUsd(targetToken, network, stxPrice)
+      setTargetPrice(priceUsd)
     }
     setAmount()
-  }, [network, targetToken])
+  }, [network, targetToken, stxPrice])
 
   useEffect(() => {
     if (!network) return
+    const amount = sourceValueUsd / targetPrice
     console.log("target-card setAmount", {
       sourceValueUsd,
-      targetPrice,
+      targetPriceUsd: targetPrice,
       targetToken,
-      targetAmount: sourceValueUsd / targetPrice
+      targetAmount: amount
     })
-    setTargetAmount(sourceValueUsd / targetPrice)
+    setTargetAmount(amount)
   }, [network, targetToken, sourceValueUsd, targetPrice])
 
   return (
@@ -66,14 +67,15 @@ const TargetCard: React.FC<TargetComponentProps> = ({
         <Flex alignItems="center" width="100%">
           <Box m={"1rem"}>
             <TokenSelector
-              options={targetTokens.filter(t => t != sourceToken)}
+              options={targetTokens}
               selectedOption={targetToken}
               onSelect={setTargetToken}
               imagePath={tokenMap[targetToken].image}
             />
           </Box>
           <input
-            defaultValue={prettyBalance(targetAmount, 0)}
+            value={prettyBalance(targetAmount, 0)}
+            readOnly={true}
             placeholder="targetAmount"
             name="target-amount"
             type="text"

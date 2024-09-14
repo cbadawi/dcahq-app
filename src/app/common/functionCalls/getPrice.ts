@@ -1,78 +1,179 @@
-import { unstable_cache } from "next/cache"
 import { StacksMainnet } from "@stacks/network"
+import { chooseAmm } from "../chooseAmm"
 import {
-  callReadOnlyFunction,
-  cvToValue,
-  principalCV,
-  ReadOnlyFunctionOptions,
-  uintCV
-} from "@stacks/transactions"
-import {
-  alex,
-  contractDeployer,
-  defaultFactor,
+  alexTokenConfig,
+  AMM,
+  ONE_6,
   stableCoins,
   tokenMap,
-  Tokens
+  Tokens,
+  velarTokenConfig
 } from "../helpers"
+import { getPrice as getPriceAlex } from "./alex/getPrice"
+import { getPrice as getPriceVelar } from "./velar/getPrice"
+import { isSourceANumerator } from "../isSourceANumerator"
+import { isStxOrStxWrapper } from "../filter-tokens"
 
-export async function getPrice(
-  tokenX: string,
-  tokenY: string,
-  network: StacksMainnet,
-  decimal = 8,
-  factor = defaultFactor
-): Promise<number> {
-  console.log("Attempting to get price", { tokenX, tokenY, decimal, factor })
-  if (tokenX == tokenY) return 1
+type PriceParams = {
+  sourceToken: Tokens
+  network: StacksMainnet
+  tokenX?: Tokens
+  tokenY?: Tokens
+  decimal?: number
+  factor?: number
+  poolId?: number
+  token0?: Tokens
+  tokenIn?: Tokens
+  amtIn?: string
+  isSourceNumerator?: boolean
+}
 
-  if (stableCoins.includes(tokenX) && stableCoins.includes(tokenY)) return 1
+export function getPrice(params: PriceParams) {
+  const { sourceToken, tokenX, tokenY, token0 } = params
+  const amm = chooseAmm(sourceToken)
+  console.log("get price fork", params)
+  // if (tokenX && tokenY && tokenX === tokenY) return 1
+  if (isStxOrStxWrapper(sourceToken)) return 1
+  // alex
+  // if (
+  //   tokenX &&
+  //   tokenY &&
+  //   stableCoins.includes(tokenX) &&
+  //   stableCoins.includes(tokenY)
+  // )
+  //   return 1
 
-  const functionArgs = [
-    principalCV(tokenX),
-    principalCV(tokenY),
-    uintCV(factor)
-  ]
-  const options: ReadOnlyFunctionOptions = {
-    contractAddress: alex,
-    contractName: "amm-pool-v2-01",
-    functionName: "get-price",
-    functionArgs,
-    network,
-    senderAddress: contractDeployer
+  // velar
+  // if (stableCoins.includes(sourceToken) && amm == AMM.Velar) return 1
+
+  switch (amm) {
+    case AMM.Alex:
+      return getPriceFromAlex(params)
+    case AMM.Velar:
+      return getPriceFromVelar(params)
+    default:
+      throw new Error("Unhandled AMM: " + amm)
   }
-  const response = await callReadOnlyFunction(options)
-  if (response.type == 8) {
-    console.log("failed getPrice", { tokenX, tokenY, decimal, factor })
-    // @ts-ignore
-    if (response.value.value == 2001n) {
-      const tokenXPricePromise = getPrice(
-        tokenMap[Tokens.wSTX].contract,
-        tokenX,
-        network,
-        8, // TODO
-        factor
-      )
+}
 
-      const tokenYPricePromise = getPrice(
-        tokenMap[Tokens.wSTX].contract,
-        tokenY,
-        network,
-        8, // TODO
-        factor
-      )
-      const [tokenXPrice, tokenYPrice] = await Promise.all([
-        tokenXPricePromise,
-        tokenYPricePromise
-      ])
+function getPriceFromAlex(params: PriceParams) {
+  const { network, tokenX, tokenY, decimal, factor } = params
 
-      return tokenYPrice / tokenXPrice
-    }
-    return 0
-  } // error
-  // @ts-ignore
-  const priceCV = response.value
-  const price = cvToValue(priceCV)
-  console.log("getPrice", { response, price, tokenX, tokenY })
-  return Number(price) / 10 ** decimal
+  if (!network || !tokenX || !tokenY) {
+    throw new Error(
+      `Incorrect Alex getPrice params: tokenX ${tokenX}, tokenY ${tokenY}`
+    )
+  }
+
+  return getPriceAlex({ network, tokenX, tokenY, decimal, factor })
+}
+
+function getPriceFromVelar(params: PriceParams) {
+  const {
+    network,
+    poolId,
+    token0,
+    tokenIn,
+    amtIn,
+    isSourceNumerator,
+    sourceToken
+  } = params
+  if (!network || !poolId || !token0 || !tokenIn || !amtIn) {
+    throw new Error(
+      `Incorrect Velar getPrice params: token ${sourceToken}, poolId ${poolId}, token0 ${token0}, tokenIn ${tokenIn}, amtIn ${amtIn}`
+    )
+  }
+
+  return getPriceVelar({
+    network,
+    poolId,
+    token0,
+    tokenIn,
+    amtIn,
+    isSourceNumerator: isSourceNumerator ?? false
+  })
+}
+
+export function getPriceParams(
+  token: Tokens,
+  network: StacksMainnet
+): PriceParams {
+  const amm = chooseAmm(token)
+
+  switch (amm) {
+    case AMM.Alex:
+      const alexParams = getAlexPriceParams(network, token)
+      console.log({ alexPriceParams: alexParams })
+      return alexParams
+    case AMM.Velar:
+      const params = getVelarPriceParams(network, token)
+      console.log({ velarPriceParams: params })
+      return params
+    default:
+      throw new Error("Unhandled AMM: " + amm)
+  }
+}
+
+function getAlexPriceParams(
+  network: StacksMainnet,
+  token: Tokens
+): PriceParams {
+  if (isStxOrStxWrapper(token)) token = Tokens.ASTX
+
+  const tokenX = Tokens.ASTX
+  const tokenY = token
+  const decimal = tokenMap[token].decimal
+  const factor = alexTokenConfig[token]?.[Tokens.ASTX]?.factor
+
+  return {
+    sourceToken: token,
+    network,
+    tokenX,
+    tokenY,
+    decimal,
+    factor
+  }
+}
+
+function getVelarPriceParams(
+  network: StacksMainnet,
+  token: Tokens
+): PriceParams {
+  if (isStxOrStxWrapper(token)) token = Tokens.VSTX
+
+  const poolId = velarTokenConfig[token]?.[Tokens.VSTX]?.poolId
+  const token0 = velarTokenConfig[token]?.[Tokens.VSTX]?.token0
+  const tokenIn = Tokens.VSTX
+  const amtIn = ONE_6.toString()
+  const isSourceNumerator = isSourceANumerator(token, Tokens.AUSDT)
+
+  return {
+    sourceToken: token,
+    network,
+    poolId,
+    token0,
+    tokenIn,
+    amtIn,
+    isSourceNumerator
+  }
+}
+
+export async function getPriceUsd(
+  token: Tokens,
+  network: StacksMainnet,
+  stxPrice: number
+) {
+  if (stableCoins.includes(token)) return 1
+  if (isStxOrStxWrapper(token)) return stxPrice
+  const priceParams = getPriceParams(token, network)
+  const tokenPriceInStx = await getPrice(priceParams)
+  const tokenPriceInUsd = tokenPriceInStx * stxPrice
+  console.log("getPriceUsd", {
+    tokenPriceInUsd,
+    tokenPriceInStx,
+    stxPrice,
+    token,
+    priceParams
+  })
+  return tokenPriceInUsd
 }

@@ -14,15 +14,23 @@ export function prettyBalance(
   dec = 8,
   showDec = true
 ): string {
-  const numberBalance = Number(balance) / 10 ** dec
+  if (typeof balance === "number" && isNaN(balance)) return "0"
+  if (typeof balance === "bigint" && balance === BigInt(0)) return "0"
+  const numberBalance =
+    typeof balance === "number" ? balance : Number(balance) / 10 ** dec
   const formattedBalance = showDec ? numberBalance : Math.floor(numberBalance)
   return formattedBalance.toLocaleString()
 }
 
 export function prettyPrice(price: number) {
-  if (price >= 1) {
-    // For values >= 1, round to 2 decimal places
-    return price.toFixed(2)
+  if (isNaN(price) || price == Infinity) {
+    return "--"
+  } else if (price >= 1) {
+    // For values >= 1, round to 2 decimal places and remove trailing zeros if integer
+    const formattedPrice = price.toFixed(2)
+    return formattedPrice.endsWith(".00")
+      ? formattedPrice.slice(0, -3)
+      : formattedPrice
   } else if (price > 0 && price < 1) {
     // For values < 1, determine the number of significant digits
     // Find the number of digits before the first non-zero digit

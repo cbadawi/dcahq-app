@@ -12,11 +12,10 @@ import {
 import { StacksMainnet } from "@stacks/network"
 import {
   contractDeployer,
-  contractName,
+  dcaManagerName,
   maxUint128,
   tokenMap,
-  Tokens,
-  wStxContract
+  Tokens
 } from "../../helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 
@@ -28,7 +27,8 @@ export const createDCA = async (
   purchaseAmount: number,
   network: StacksMainnet,
   minPrice?: string,
-  maxPrice?: string
+  maxPrice?: string,
+  setTxId?: React.Dispatch<React.SetStateAction<string>>
 ) => {
   console.log("CreateDca", {
     sourceToken,
@@ -78,7 +78,7 @@ export const createDCA = async (
   const postConditions = [
     makeContractSTXPostCondition(
       contractDeployer,
-      contractName,
+      dcaManagerName,
       postConditionCode,
       // in the case of the wstx, the transfer function expect to the pow of 8 but the post condition is displaying the value as a pow of 6
       0 // sourceContract == wStxContract ? totalAmount / 10 ** 2 : totalAmount
@@ -87,7 +87,7 @@ export const createDCA = async (
 
   const txOptions: ContractCallOptions | ContractCallRegularOptions = {
     contractAddress: contractDeployer,
-    contractName: contractName,
+    contractName: dcaManagerName,
     functionName: "create-dca",
     functionArgs,
     network,
@@ -108,6 +108,7 @@ export const createDCA = async (
       icon: window.location.origin + "/logo.png"
     },
     onFinish: (data: any) => {
+      if (setTxId) setTxId(data.txId)
       console.log("Stacks Transaction:", data.stacksTransaction)
       console.log("Transaction ID:", data.txId)
       console.log("Raw transaction:", data.txRaw)

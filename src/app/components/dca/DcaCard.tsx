@@ -10,13 +10,17 @@ import TargetComponent from "./target-card"
 import {
   Intervals,
   maxUint128,
-  sourceTokens,
-  Tokens
+  Tokens,
+  targetTokens,
+  tokenMap,
+  defaultFactor
 } from "@/src/app/common/helpers"
 import IntervalButton from "./interval-button"
 import CreateDcaButton from "../../admin/create-dca-button"
 import { StacksMainnet } from "@stacks/network"
 import Customize from "./customize"
+import { chooseAmm } from "../../common/chooseAmm"
+import { getPrice as getPriceAlex } from "../../common/functionCalls/alex/getPrice"
 
 const DcaCard = () => {
   const { userSession } = useUser()
@@ -25,14 +29,17 @@ const DcaCard = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("")
   const [minPrice, setMinPrice] = useState(BigInt(0))
   const [maxPrice, setMaxPrice] = useState(maxUint128)
-  const [sourceToken, setSourceToken] = useState<Tokens>(Tokens.wSTX)
+  const [sourceToken, setSourceToken] = useState<Tokens>(Tokens.VAEUSDC)
   const [sourceValueUsd, setSourceValueUsd] = useState(0)
-  const [targetToken, setTargetToken] = useState<Tokens>(Tokens.WWELSH)
+  const [targetToken, setTargetToken] = useState<Tokens>(Tokens.VSTX)
+  const [targetTokensOptions, setTargetTokensOptions] =
+    useState<Tokens[]>(targetTokens)
   const [selectedInterval, setSelectedInterval] = useState<Intervals>(
     Intervals.hours2
   )
   const [network, setNetwork] = useState<StacksMainnet | null>(null)
   const [targetPrice, setTargetPrice] = useState(0)
+  const [stxPrice, setStxPrice] = useState(1)
 
   useEffect(() => {
     if (!userSession?.isUserSignedIn()) return
@@ -42,6 +49,20 @@ const DcaCard = () => {
     setNetwork(mainnet)
   }, [])
 
+  useEffect(() => {
+    const setStx = async () => {
+      if (!network) return
+      const price = await getPriceAlex({
+        network,
+        tokenX: Tokens.ASTX,
+        tokenY: Tokens.AUSDT,
+        decimal: tokenMap[Tokens.ASTX].decimal,
+        factor: defaultFactor
+      })
+      setStxPrice(price)
+    }
+    setStx()
+  }, [network])
   return (
     <Flex justifyContent="center">
       <Box
@@ -57,13 +78,14 @@ const DcaCard = () => {
         <Flex pb="0.5rem">
           <Box fontSize="xl" fontWeight="bold">
             From:
+            {chooseAmm(sourceToken, targetToken)}
           </Box>
         </Flex>
         <Flex direction="column">
           <SourceComponent
             network={network}
             user={user}
-            sourceTokens={sourceTokens}
+            stxPrice={stxPrice}
             sourceToken={sourceToken}
             setSourceToken={setSourceToken}
             totalAmount={totalAmount}
@@ -72,6 +94,8 @@ const DcaCard = () => {
             setPurchaseAmount={setPurchaseAmount}
             sourceValueUsd={sourceValueUsd}
             setSourceValueUsd={setSourceValueUsd}
+            setTargetToken={setTargetToken}
+            setTargetTokens={setTargetTokensOptions}
           />
           <Flex width={"100%"} position={"relative"}>
             <HStack pb="0.5rem" position={"absolute"} bottom="0">
@@ -85,7 +109,9 @@ const DcaCard = () => {
           </Flex>
           <TargetComponent
             sourceToken={sourceToken}
+            targetTokens={targetTokensOptions}
             network={network}
+            stxPrice={stxPrice}
             sourceValueUsd={sourceValueUsd}
             targetToken={targetToken}
             setTargetToken={setTargetToken}
@@ -108,15 +134,17 @@ const DcaCard = () => {
             minPrice={minPrice}
             maxPrice={maxPrice}
           />
-          <Customize
-            setMinPrice={setMinPrice}
-            setMaxPrice={setMaxPrice}
-            sourceToken={sourceToken}
-            targetToken={targetToken}
-            targetToSourcePrice={
-              targetPrice / sourceValueUsd / Number(totalAmount)
-            }
-          />
+          {!!user && (
+            <Customize
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+              sourceToken={sourceToken}
+              targetToken={targetToken}
+              targetToSourcePrice={
+                targetPrice / (sourceValueUsd / Number(totalAmount))
+              }
+            />
+          )}
         </Flex>
       </Box>
     </Flex>
