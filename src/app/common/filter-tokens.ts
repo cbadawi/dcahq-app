@@ -14,7 +14,7 @@ export const isVelarToken = (token: Tokens) =>
 
 export function getAvailableTargetTokens(allTokens: Tokens[], source: Tokens) {
   if (isStxOrStxWrapper(source))
-    return allTokens.filter(t => t != source && !isWrapper(t))
+    return allTokens.filter(t => t != source && t == Tokens.AWWELSH)
 
   return allTokens.filter(t => {
     if (t != source)

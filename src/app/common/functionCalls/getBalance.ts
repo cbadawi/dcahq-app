@@ -26,6 +26,7 @@ export async function getBalance(
     senderAddress: address
   }
   const response = await callReadOnlyFunction(options)
+  console.log("getbalance", response)
   // @ts-ignore
   const balanceCV = response.value
   const balance = cvToValue(balanceCV)

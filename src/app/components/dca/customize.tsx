@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import DownChevron from "../icons/down-chevron"
 import { Box, Flex, HStack, VStack } from "@/styled-system/jsx"
 import { css } from "@/styled-system/css"
@@ -12,8 +12,8 @@ const Customize = ({
   sourceToken,
   targetToken
 }: {
-  setMinPrice: React.Dispatch<React.SetStateAction<bigint>>
-  setMaxPrice: React.Dispatch<React.SetStateAction<bigint>>
+  setMinPrice: React.Dispatch<React.SetStateAction<string>>
+  setMaxPrice: React.Dispatch<React.SetStateAction<string>>
   targetToSourcePrice: number
   sourceToken: Tokens
   targetToken: Tokens
@@ -21,23 +21,48 @@ const Customize = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [minPriceInput, setMinPriceInput] = useState<string>("")
   const [maxPriceInput, setMaxPriceInput] = useState<string>("")
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef?.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsDropdownOpen(false)
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setIsDropdownOpen(false)
+    }
+  }
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setMinPriceInput(value)
-    setMinPrice(BigInt(value || 0))
+    setMinPrice(value)
   }
 
   const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setMaxPriceInput(value)
-    setMaxPrice(BigInt(value || 0))
+    setMaxPrice(value)
   }
 
   return (
-    <VStack mt={"1rem"} position="relative">
+    <VStack mt={"1rem"} position="relative" ref={dropdownRef}>
       <HStack
         onClick={toggleDropdown}
         p="0.5rem"

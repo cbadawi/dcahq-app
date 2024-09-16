@@ -13,77 +13,72 @@ import { StacksMainnet } from "@stacks/network"
 import {
   contractDeployer,
   dcaManagerName,
+  defaultStrategyContract,
   maxUint128,
   tokenMap,
   Tokens
 } from "../../helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
+import { isStxOrStxWrapper } from "../../filter-tokens"
+import { getCreateDcaPostConditions } from "../getPostConditions"
 
 export const createDCA = async (
   sourceToken: Tokens,
   targetToken: Tokens,
   interval: number,
-  totalAmount: number,
-  purchaseAmount: number,
+  totalAmountString: string,
+  purchaseAmountString: string,
   network: StacksMainnet,
+  userAddress: string,
   minPrice?: string,
   maxPrice?: string,
   setTxId?: React.Dispatch<React.SetStateAction<string>>
 ) => {
+  if (setTxId) setTxId("") // reset txid to not have the toaster re-render when a user cancels a second tx
   console.log("CreateDca", {
     sourceToken,
     targetToken,
     interval,
-    totalAmount,
-    purchaseAmount,
+    totalAmountString,
+    purchaseAmountString,
     minPrice,
     maxPrice,
     network
   })
 
-  if (!totalAmount || !purchaseAmount) return
+  if (!totalAmountString || !purchaseAmountString) return
+  // right now only time stx can be used on source is when welsh is the target=> use alex. but that should change
+  if (sourceToken == Tokens.STX) sourceToken = Tokens.ASTX
 
-  const sourceContract = tokenMap[sourceToken].contract
+  const sourceDetails = tokenMap[sourceToken]
+
+  const sourceDecimal = sourceDetails.decimal
+  const sourceContract = sourceDetails.contract
   const targetContract = tokenMap[targetToken].contract
 
+  const unit = BigInt(10 ** sourceDecimal)
+  const totalAmount = BigInt(totalAmountString) * unit
+  const purchaseAmount = BigInt(purchaseAmountString) * unit
+  const minPriceInUnits = BigInt(minPrice ?? "0") * unit
+  const maxPriceInUnits = BigInt(maxPrice ?? maxUint128) * unit
+
+  const totalAmountUintCV = uintCV(totalAmount.toString())
   const functionArgs = [
     principalCV(sourceContract),
     principalCV(targetContract),
     uintCV(interval.toString()),
-    uintCV(totalAmount.toString()),
+    totalAmountUintCV,
     uintCV(purchaseAmount.toString()),
-    uintCV(minPrice ?? 0),
-    uintCV(maxPrice ?? maxUint128.toString())
-    // principalCV(startegyPrincipal)
+    uintCV(minPriceInUnits?.toString()),
+    uintCV(maxPriceInUnits?.toString()),
+    principalCV(defaultStrategyContract)
   ]
 
-  console.log("createDCA functionArgs", { functionArgs })
-
-  const postConditionCode = FungibleConditionCode.GreaterEqual
-  const sourceDetails = tokenMap[sourceToken]
-
-  const fungibleAssetInfo = createAssetInfo(
-    sourceDetails.contract.split(".")[0],
-    sourceDetails.contract.split(".")[1],
-    sourceDetails.assetName
+  const postConditions = getCreateDcaPostConditions(
+    sourceToken,
+    totalAmount,
+    userAddress
   )
-  // const postConditions = makeContractFungiblePostCondition(
-  //   contractDeployer,
-  //   contractName,
-  //   postConditionCode,
-  //   totalAmount.toString(),
-  //   fungibleAssetInfo
-  // )
-
-  const postConditions = [
-    makeContractSTXPostCondition(
-      contractDeployer,
-      dcaManagerName,
-      postConditionCode,
-      // in the case of the wstx, the transfer function expect to the pow of 8 but the post condition is displaying the value as a pow of 6
-      0 // sourceContract == wStxContract ? totalAmount / 10 ** 2 : totalAmount
-    )
-  ]
 
   const txOptions: ContractCallOptions | ContractCallRegularOptions = {
     contractAddress: contractDeployer,
@@ -91,20 +86,10 @@ export const createDCA = async (
     functionName: "create-dca",
     functionArgs,
     network,
-    postConditions: [
-      Pc.principal("SP3XZG3JKX58XC3DN1PQGSYJDYMSKM55RM43V6SN")
-        .willSendGte(
-          // in the case of the wstx, the transfer function expect to the pow of 8 but the post condition is displaying the value as a pow of 6
-          // sourceContract == wStxContract
-          // ? totalAmount / 10 ** 2
-          // : totalAmount / 10 ** 2
-          0
-        )
-        .ustx()
-    ],
-    postConditionMode: PostConditionMode.Allow,
+    postConditions,
+    // postConditionMode: PostConditionMode.Allow,
     appDetails: {
-      name: "Sup",
+      name: "DCA-HQ",
       icon: window.location.origin + "/logo.png"
     },
     onFinish: (data: any) => {

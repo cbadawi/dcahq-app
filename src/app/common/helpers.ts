@@ -3,14 +3,17 @@ export const maxJavascriptNumber = 9007199254740991
 export const defaultFactor = 100_000_000
 
 export const appName = "DCA HQ"
-const version = "-v0"
+const version = "-v1"
 export const contractDeployer = "SPNG8GDC6VW6SPAGE5M9ZCASPJWK65NDTH2E84HX"
 
 export const authName = "auth" + version
-export const dcaManagerName = "dca-manager" + version + "-1"
+export const dcaManagerName = "dca-manager" + version // + "-1"
 export const dcaVaultName = "dca-vault" + version
-export const defaultStrategyName = "default-strategy" + version + "-0"
-export const strategyName = "auth" + version
+export const defaultStrategyName = "default-strategy" + version //+ "-0"
+export const strategyName = "strategy" + "v0" // version
+
+export const defaultStrategyContract =
+  contractDeployer + "." + defaultStrategyName
 
 export const ONE_6 = 10 ** 6
 export const ONE_8 = 10 ** 8
@@ -88,7 +91,7 @@ export const stxWrappers = [Tokens.ASTX, Tokens.VSTX]
 
 export const tokenMap: {
   [key in Tokens]: {
-    contract: string
+    contract: `${string}.${string}`
     decimal: number
     assetName: string
     image: string
@@ -96,7 +99,7 @@ export const tokenMap: {
   }
 } = {
   [Tokens.STX]: {
-    contract: "stx",
+    contract: ".stx",
     image: "/stx.svg",
     decimal: 6,
     assetName: "stx",

@@ -6,6 +6,7 @@ import { css } from "@/styled-system/css"
 const Portfolio = () => {
   // source & target value pie chart
   // cards per dca position with amounts, ETA
+  // todo if you bought instead of DCA'd you would have had XX instead of YY
   return (
     <div>
       <div

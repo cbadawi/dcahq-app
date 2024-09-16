@@ -89,6 +89,8 @@ const SourceCard = ({
     fetchPrice()
   }, [sourceToken.valueOf(), totalAmount, stxPrice])
 
+  const sourceDetails = tokenMap[sourceToken]
+
   return (
     <Box
       display="block"
@@ -109,7 +111,7 @@ const SourceCard = ({
               options={getAvailableSourceTokens(sourceTokens)}
               selectedOption={sourceToken}
               onSelect={setSourceToken}
-              imagePath={tokenMap[sourceToken].image}
+              imagePath={sourceDetails.image}
             />
           </Box>
           <InputAmount
@@ -132,7 +134,9 @@ const SourceCard = ({
             fontFamily={"sans-serif"}
             fontSize={"medium"}
           >
-            <span>Balance: {prettyBalance(balance)}</span>
+            <span>
+              Balance: {prettyBalance(balance, sourceDetails.decimal)}
+            </span>
             <span>≈ ${prettyPrice(sourceValueUsd)}</span>
           </Flex>
         </HStack>

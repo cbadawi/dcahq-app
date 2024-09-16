@@ -19,7 +19,6 @@ import IntervalButton from "./interval-button"
 import CreateDcaButton from "../../admin/create-dca-button"
 import { StacksMainnet } from "@stacks/network"
 import Customize from "./customize"
-import { chooseAmm } from "../../common/chooseAmm"
 import { getPrice as getPriceAlex } from "../../common/functionCalls/alex/getPrice"
 
 const DcaCard = () => {
@@ -27,8 +26,8 @@ const DcaCard = () => {
   const [user, setUser] = useState<UserData | null>(null)
   const [totalAmount, setTotalAmount] = useState("")
   const [purchaseAmount, setPurchaseAmount] = useState("")
-  const [minPrice, setMinPrice] = useState(BigInt(0))
-  const [maxPrice, setMaxPrice] = useState(maxUint128)
+  const [minPrice, setMinPrice] = useState("0")
+  const [maxPrice, setMaxPrice] = useState(maxUint128.toString())
   const [sourceToken, setSourceToken] = useState<Tokens>(Tokens.VAEUSDC)
   const [sourceValueUsd, setSourceValueUsd] = useState(0)
   const [targetToken, setTargetToken] = useState<Tokens>(Tokens.VSTX)
@@ -78,7 +77,6 @@ const DcaCard = () => {
         <Flex pb="0.5rem">
           <Box fontSize="xl" fontWeight="bold">
             From:
-            {chooseAmm(sourceToken, targetToken)}
           </Box>
         </Flex>
         <Flex direction="column">
@@ -133,8 +131,9 @@ const DcaCard = () => {
             purchaseAmount={purchaseAmount}
             minPrice={minPrice}
             maxPrice={maxPrice}
+            userAddress={user?.profile.stxAddress.mainnet}
           />
-          {!!user && (
+          {!!user && !!sourceValueUsd && (
             <Customize
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}

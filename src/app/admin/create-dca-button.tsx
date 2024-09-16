@@ -6,6 +6,7 @@ import { css } from "@/styled-system/css"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import ConnectWallet from "../components/navigation/ConnectWallet"
+import { useUser } from "../contexts/UserProvider"
 
 const CreateDcaButton = ({
   network,
@@ -15,7 +16,8 @@ const CreateDcaButton = ({
   totalAmount,
   purchaseAmount,
   minPrice,
-  maxPrice
+  maxPrice,
+  userAddress
 }: {
   network: StacksMainnet | null
   sourceToken: Tokens
@@ -23,12 +25,13 @@ const CreateDcaButton = ({
   interval: number
   totalAmount: string
   purchaseAmount: string
-  minPrice: bigint
-  maxPrice: bigint
+  minPrice: string
+  maxPrice: string
+  userAddress: string
 }) => {
   const [txID, setTxId] = useState("")
+  useUser()
   if (!network) return <ConnectWallet variant="createDcaButton" />
-  const decimals = tokenMap[sourceToken].decimal
   return (
     <>
       <button
@@ -49,19 +52,24 @@ const CreateDcaButton = ({
               sourceToken,
               targetToken,
               interval,
-              parseInt(totalAmount) * 10 ** decimals,
-              parseInt(purchaseAmount) * 10 ** decimals,
+              totalAmount,
+              purchaseAmount,
               network,
-              minPrice.toString(),
-              maxPrice.toString(),
+              userAddress,
+              minPrice,
+              maxPrice,
               setTxId
             )
-            toast.success("Click here!" + txID, {
-              position: "top-left",
-              onClick: () => {
-                window.open(`https://stxscan.co/transactions/${txID}`, "_blank")
-              }
-            })
+            if (txID)
+              toast.success("View transaction", {
+                position: "top-left",
+                onClick: () => {
+                  window.open(
+                    `https://stxscan.co/transactions/${txID}`,
+                    "_blank"
+                  )
+                }
+              })
           } catch (error) {
             if (
               error instanceof Error &&

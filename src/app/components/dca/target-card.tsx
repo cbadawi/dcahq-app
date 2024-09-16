@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { Box, Flex, VStack } from "@/styled-system/jsx"
-import Dropdown from "../dropdown"
 import { tokenMap, Tokens } from "@/src/app/common/helpers"
 import { css } from "@/styled-system/css"
 import { getPrice, getPriceUsd } from "../../common/functionCalls/getPrice"
 import { prettyBalance } from "../../common/prettyCV"
 import { StacksMainnet } from "@stacks/network"
 import TokenSelector from "../token-selector"
-import { getPriceParams } from "../../common/functionCalls/getPrice"
 
 interface TargetComponentProps {
   targetToken: Tokens
