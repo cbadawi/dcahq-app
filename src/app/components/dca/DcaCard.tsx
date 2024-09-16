@@ -16,7 +16,7 @@ import {
   defaultFactor
 } from "@/src/app/common/helpers"
 import IntervalButton from "./interval-button"
-import CreateDcaButton from "../../admin/create-dca-button"
+import CreateDcaButton from "./create-dca-button"
 import { StacksMainnet } from "@stacks/network"
 import Customize from "./customize"
 import { getPrice as getPriceAlex } from "../../common/functionCalls/alex/getPrice"

@@ -1,12 +1,12 @@
 import { StacksMainnet } from "@stacks/network"
 import React, { useState } from "react"
-import { createDCA } from "../common/functionCalls/dca/createDca"
-import { tokenMap, Tokens } from "../common/helpers"
 import { css } from "@/styled-system/css"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import ConnectWallet from "../components/navigation/ConnectWallet"
-import { useUser } from "../contexts/UserProvider"
+import { useUser } from "../../contexts/UserProvider"
+import ConnectWallet from "../navigation/ConnectWallet"
+import { createDCA } from "../../common/functionCalls/dca/createDca"
+import { Tokens } from "../../common/helpers"
 
 const CreateDcaButton = ({
   network,
