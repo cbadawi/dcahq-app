@@ -5,8 +5,8 @@ import {
   principalCV,
   ReadOnlyFunctionOptions
 } from "@stacks/transactions"
-import { tokenMap, Tokens } from "../helpers"
-import { isStxOrStxWrapper } from "../filter-tokens"
+import { tokenMap, Tokens } from "../utils/helpers"
+import { isStxOrStxWrapper } from "../utils/filter-tokens"
 
 export async function getBalance(
   token: Tokens,
@@ -26,7 +26,6 @@ export async function getBalance(
     senderAddress: address
   }
   const response = await callReadOnlyFunction(options)
-  console.log("getbalance", response)
   // @ts-ignore
   const balanceCV = response.value
   const balance = cvToValue(balanceCV)

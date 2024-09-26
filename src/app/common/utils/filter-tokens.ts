@@ -1,16 +1,16 @@
 import {
-  alexTokenConfig,
+  alexPairConfig,
   stxWrappers,
   tokenMap,
   Tokens,
-  velarTokenConfig
+  velarPairConfig
 } from "./helpers"
 
 export const isAlexToken = (token: Tokens) =>
-  token === Tokens.ASTX || alexTokenConfig[Tokens.ASTX]?.[token]
+  token === Tokens.ASTX || alexPairConfig[Tokens.ASTX]?.[token]
 
 export const isVelarToken = (token: Tokens) =>
-  token === Tokens.VSTX || velarTokenConfig[Tokens.VSTX]?.[token]
+  token === Tokens.VSTX || velarPairConfig[Tokens.VSTX]?.[token]
 
 export function getAvailableTargetTokens(allTokens: Tokens[], source: Tokens) {
   if (isStxOrStxWrapper(source))

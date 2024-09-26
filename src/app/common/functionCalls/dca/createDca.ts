@@ -1,14 +1,5 @@
 "use client"
-import {
-  uintCV,
-  FungibleConditionCode,
-  principalCV,
-  createAssetInfo,
-  makeContractSTXPostCondition,
-  ContractCallOptions,
-  Pc,
-  PostConditionMode
-} from "@stacks/transactions"
+import { uintCV, principalCV, ContractCallOptions } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network"
 import {
   contractDeployer,
@@ -17,10 +8,11 @@ import {
   maxUint128,
   tokenMap,
   Tokens
-} from "../../helpers"
+} from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
-import { isStxOrStxWrapper } from "../../filter-tokens"
-import { getCreateDcaPostConditions } from "../getPostConditions"
+import { getPostConditions } from "../getPostConditions"
+import { onFinishTx } from "../../tx-handlers"
+import { appDetails } from "../../appDetails"
 
 export const createDCA = async (
   sourceToken: Tokens,
@@ -34,7 +26,8 @@ export const createDCA = async (
   maxPrice?: string,
   setTxId?: React.Dispatch<React.SetStateAction<string>>
 ) => {
-  if (setTxId) setTxId("") // reset txid to not have the toaster re-render when a user cancels a second tx
+  // reset txid to not have the toaster re-render when a user cancels a second tx
+  if (setTxId) setTxId("")
   console.log("CreateDca", {
     sourceToken,
     targetToken,
@@ -60,7 +53,10 @@ export const createDCA = async (
   const totalAmount = BigInt(totalAmountString) * unit
   const purchaseAmount = BigInt(purchaseAmountString) * unit
   const minPriceInUnits = BigInt(minPrice ?? "0") * unit
-  const maxPriceInUnits = BigInt(maxPrice ?? maxUint128) * unit
+  const maxPriceInUnits =
+    maxPrice && maxPrice != maxUint128.toString()
+      ? BigInt(maxPrice) * unit
+      : maxUint128
 
   const totalAmountUintCV = uintCV(totalAmount.toString())
   const functionArgs = [
@@ -74,7 +70,7 @@ export const createDCA = async (
     principalCV(defaultStrategyContract)
   ]
 
-  const postConditions = getCreateDcaPostConditions(
+  const postConditions = getPostConditions(
     sourceToken,
     totalAmount,
     userAddress
@@ -88,17 +84,11 @@ export const createDCA = async (
     network,
     postConditions,
     // postConditionMode: PostConditionMode.Allow,
-    appDetails: {
-      name: "DCA-HQ",
-      icon: window.location.origin + "/logo.png"
-    },
+    appDetails,
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
-      console.log("Stacks Transaction:", data.stacksTransaction)
-      console.log("Transaction ID:", data.txId)
-      console.log("Raw transaction:", data.txRaw)
+      onFinishTx(data)
     }
   }
-
   await openContractCall(txOptions)
 }

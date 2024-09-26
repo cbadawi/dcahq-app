@@ -1,12 +1,14 @@
 import React, { useState } from "react"
 import { css } from "@/styled-system/css"
 import { HStack } from "@/styled-system/jsx"
-import { Intervals } from "../../common/helpers"
+import { Intervals } from "../../common/utils/helpers"
 
 const IntervalButton = ({
+  label,
   selectedInterval,
   setSelectedInterval
 }: {
+  label?: string
   selectedInterval: Intervals
   setSelectedInterval: React.Dispatch<React.SetStateAction<Intervals>>
 }) => {
@@ -29,14 +31,16 @@ const IntervalButton = ({
 
   return (
     <div>
-      <span
-        className={css({
-          fontSize: "1.1rem",
-          mr: "0.5rem"
-        })}
-      >
-        Buy every:
-      </span>
+      {!!label && (
+        <span
+          className={css({
+            fontSize: "1.1rem",
+            mr: "0.5rem"
+          })}
+        >
+          {label}
+        </span>
+      )}
       <div
         className={css({
           px: "5px",

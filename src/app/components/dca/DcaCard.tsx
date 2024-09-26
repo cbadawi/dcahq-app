@@ -14,7 +14,7 @@ import {
   targetTokens,
   tokenMap,
   defaultFactor
-} from "@/src/app/common/helpers"
+} from "@/src/app/common/utils/helpers"
 import IntervalButton from "./interval-button"
 import CreateDcaButton from "./create-dca-button"
 import { StacksMainnet } from "@stacks/network"
@@ -42,11 +42,18 @@ const DcaCard = () => {
 
   useEffect(() => {
     if (!userSession?.isUserSignedIn()) return
-    console.log("!!! setting user", userSession?.loadUserData())
     setUser(userSession?.loadUserData())
     const mainnet = new StacksMainnet()
     setNetwork(mainnet)
   }, [])
+
+  const resetHandlerPostDca = () => {
+    setMinPrice("0")
+    setMaxPrice(maxUint128.toString())
+    setSelectedInterval(Intervals.hours2)
+    setTotalAmount("")
+    setPurchaseAmount("")
+  }
 
   useEffect(() => {
     const setStx = async () => {
@@ -118,6 +125,7 @@ const DcaCard = () => {
           />
           <Flex my={"1rem"}>
             <IntervalButton
+              label="Buy Every:"
               selectedInterval={selectedInterval}
               setSelectedInterval={setSelectedInterval}
             />
@@ -132,6 +140,7 @@ const DcaCard = () => {
             minPrice={minPrice}
             maxPrice={maxPrice}
             userAddress={user?.profile.stxAddress.mainnet}
+            resetHandlerPostDca={resetHandlerPostDca}
           />
           {!!user && !!sourceValueUsd && (
             <Customize

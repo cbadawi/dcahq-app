@@ -1,18 +1,18 @@
 import { StacksMainnet } from "@stacks/network"
-import { chooseAmm } from "../chooseAmm"
+import { getPrice as getPriceAlex } from "./alex/getPrice"
+import { getPrice as getPriceVelar } from "./velar/getPrice"
+import { isSourceANumerator } from "../utils/isSourceANumerator"
+import { isStxOrStxWrapper } from "../utils/filter-tokens"
 import {
-  alexTokenConfig,
+  alexPairConfig,
   AMM,
   ONE_6,
   stableCoins,
   tokenMap,
   Tokens,
-  velarTokenConfig
-} from "../helpers"
-import { getPrice as getPriceAlex } from "./alex/getPrice"
-import { getPrice as getPriceVelar } from "./velar/getPrice"
-import { isSourceANumerator } from "../isSourceANumerator"
-import { isStxOrStxWrapper } from "../filter-tokens"
+  velarPairConfig
+} from "../utils/helpers"
+import { chooseAmm } from "../utils/chooseAmm"
 
 type PriceParams = {
   sourceToken: Tokens
@@ -31,7 +31,6 @@ type PriceParams = {
 export function getPrice(params: PriceParams) {
   const { sourceToken, tokenX, tokenY, token0 } = params
   const amm = chooseAmm(sourceToken)
-  console.log("get price fork", params)
   // if (tokenX && tokenY && tokenX === tokenY) return 1
   if (isStxOrStxWrapper(sourceToken)) return 1
   // alex
@@ -103,11 +102,9 @@ export function getPriceParams(
   switch (amm) {
     case AMM.Alex:
       const alexParams = getAlexPriceParams(network, token)
-      console.log({ alexPriceParams: alexParams })
       return alexParams
     case AMM.Velar:
       const params = getVelarPriceParams(network, token)
-      console.log({ velarPriceParams: params })
       return params
     default:
       throw new Error("Unhandled AMM: " + amm)
@@ -123,7 +120,7 @@ function getAlexPriceParams(
   const tokenX = Tokens.ASTX
   const tokenY = token
   const decimal = tokenMap[token].decimal
-  const factor = alexTokenConfig[token]?.[Tokens.ASTX]?.factor
+  const factor = alexPairConfig[token]?.[Tokens.ASTX]?.factor
 
   return {
     sourceToken: token,
@@ -141,12 +138,12 @@ function getVelarPriceParams(
 ): PriceParams {
   if (isStxOrStxWrapper(token)) token = Tokens.VSTX
 
-  const poolId = velarTokenConfig[token]?.[Tokens.VSTX]?.poolId
-  const token0 = velarTokenConfig[token]?.[Tokens.VSTX]?.token0
+  const poolId = velarPairConfig[token]?.[Tokens.VSTX]?.poolId
+  const token0 = velarPairConfig[token]?.[Tokens.VSTX]?.token0
   const tokenIn = Tokens.VSTX
   const amtIn = ONE_6.toString()
-  const isSourceNumerator = isSourceANumerator(token, Tokens.AUSDT)
-
+  const target = Tokens.AUSDT
+  const isSourceNumerator = isSourceANumerator(token, target)
   return {
     sourceToken: token,
     network,

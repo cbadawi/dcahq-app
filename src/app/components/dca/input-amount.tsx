@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { isEmptyOrNumberInput } from "../../common/helpers"
+import { isEmptyOrNumberInput } from "../../common/utils/helpers"
 import { css } from "@/styled-system/css"
 import { VStack } from "@/styled-system/jsx"
 

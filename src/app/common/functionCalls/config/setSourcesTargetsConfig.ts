@@ -7,7 +7,7 @@ import {
   FungibleConditionCode
 } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network"
-import { appName } from "../../helpers"
+import { appName } from "../../utils/helpers"
 
 export const setSourcesTargetsConfig = (
   source: string,

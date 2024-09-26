@@ -2,8 +2,12 @@ import React, { useEffect, useRef, useState } from "react"
 import DownChevron from "../icons/down-chevron"
 import { Box, Flex, HStack, VStack } from "@/styled-system/jsx"
 import { css } from "@/styled-system/css"
-import { prettyPrice } from "../../common/prettyCV"
-import { tokenMap, Tokens } from "../../common/helpers"
+import { prettyPrice } from "../../common/utils/prettyCV"
+import { tokenMap, Tokens } from "../../common/utils/helpers"
+import {
+  getPriceRatioDisplay,
+  isSourceANumerator
+} from "../../common/utils/isSourceANumerator"
 
 const Customize = ({
   setMinPrice,
@@ -23,11 +27,12 @@ const Customize = ({
   const [maxPriceInput, setMaxPriceInput] = useState<string>("")
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  // commenting out the mousedown for down as it closes the customize dropdown when a user clicks the dca button and doesnt initiate DCA
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside)
+    // document.addEventListener("mousedown", handleClickOutside)
     document.addEventListener("keydown", handleKeyDown)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+      // document.removeEventListener("mousedown", handleClickOutside)
       document.removeEventListener("keydown", handleKeyDown)
     }
   }, [])
@@ -46,8 +51,9 @@ const Customize = ({
       setIsDropdownOpen(false)
     }
   }
-
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen)
+  }
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -60,6 +66,15 @@ const Customize = ({
     setMaxPriceInput(value)
     setMaxPrice(value)
   }
+
+  const relativePrice = isSourceANumerator(sourceToken, targetToken)
+    ? 1 / targetToSourcePrice
+    : targetToSourcePrice
+
+  console.log({
+    targetToSourcePrice,
+    issourcenumerator: isSourceANumerator(sourceToken, targetToken)
+  })
 
   return (
     <VStack mt={"1rem"} position="relative" ref={dropdownRef}>
@@ -95,12 +110,11 @@ const Customize = ({
             <Box
               display="flex"
               justifyContent="space-between"
-              alignItems="center" // Optional for vertical centering
+              alignItems="center"
               width="100%"
             >
               <label style={{ fontSize: "medium" }}>
-                {tokenMap[targetToken].displayName}/
-                {tokenMap[sourceToken].displayName} price
+                {getPriceRatioDisplay(sourceToken, targetToken)}
               </label>
               <input
                 className={css({
@@ -111,7 +125,7 @@ const Customize = ({
                   textAlign: "right",
                   bg: "transparent"
                 })}
-                value={prettyPrice(targetToSourcePrice)}
+                value={prettyPrice(relativePrice)}
                 type="text"
                 inputMode="decimal"
                 readOnly={true}

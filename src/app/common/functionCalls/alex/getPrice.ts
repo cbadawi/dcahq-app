@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache"
 import { StacksMainnet } from "@stacks/network"
 import {
   callReadOnlyFunction,
@@ -14,7 +13,7 @@ import {
   stableCoins,
   tokenMap,
   Tokens
-} from "../../helpers"
+} from "../../utils/helpers"
 
 // TODO refactor to use the dcamanager get-price. its 1 less api call to make in case of a multihop swap
 export async function getPrice(params: {

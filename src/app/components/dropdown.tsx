@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Box } from "styled-system/jsx"
-import { tokenMap, Tokens } from "../common/helpers"
+import { tokenMap, Tokens } from "../common/utils/helpers"
 
 interface DropdownProps {
   options: Tokens[]

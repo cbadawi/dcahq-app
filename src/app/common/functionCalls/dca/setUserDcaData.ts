@@ -15,19 +15,19 @@ import {
   Tokens
 } from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
-import { getPostConditions } from "../getPostConditions"
-import { appDetails } from "../../appDetails"
 import { onFinishTx } from "../../tx-handlers"
+import { appDetails } from "../../appDetails"
 
-// (define-public (add-to-position (source-trait <ft-trait-b>) (target principal) (interval uint) (strategy principal) (amount uint))
-export const reducePosition = async (
+export const setUserDcaData = async (
   network: StacksMainnet,
-  address: string,
   sourceToken: Tokens,
   targetToken: Tokens,
   interval: number,
   dcaStrategy = defaultStrategyContract,
-  reduceAmountString: string,
+  isPaused: boolean,
+  buyAmountString: string,
+  minPrice?: string,
+  maxPrice?: string,
   setTxId?: React.Dispatch<React.SetStateAction<string>>
 ) => {
   // reset txid to not have the toaster re-render when a user cancels a second tx
@@ -36,8 +36,11 @@ export const reducePosition = async (
     sourceToken,
     targetToken,
     interval,
-    reduceAmountString,
+    buyAmountString,
+    isPaused,
     dcaStrategy,
+    minPrice,
+    maxPrice,
     network
   })
 
@@ -51,24 +54,29 @@ export const reducePosition = async (
   const targetContract = tokenMap[targetToken].contract
 
   const unit = BigInt(10 ** sourceDecimal)
-  const reduceAmount = BigInt(reduceAmountString) * unit
+  const buyAmount = BigInt(buyAmountString) * unit
+  const minPriceInUnits = BigInt(minPrice ?? "0") * unit
+  const maxPriceInUnits = BigInt(maxPrice ?? maxUint128) * unit
 
-  const reduceAmountUintCV = uintCV(reduceAmount.toString())
+  const buyAmountUintCV = uintCV(buyAmount.toString())
   const functionArgs = [
     principalCV(sourceContract),
     principalCV(targetContract),
     uintCV(interval.toString()),
     principalCV(dcaStrategy),
-    reduceAmountUintCV
+    boolCV(isPaused),
+    buyAmountUintCV,
+    uintCV(minPriceInUnits?.toString()),
+    uintCV(maxPriceInUnits?.toString())
   ]
 
   const txOptions: ContractCallOptions | ContractCallRegularOptions = {
     contractAddress: contractDeployer,
     contractName: dcaManagerName,
-    functionName: "reduce-position",
+    functionName: "set-user-dca-data",
     functionArgs,
     network,
-    postConditions: getPostConditions(sourceToken, reduceAmount, address),
+    // postConditions,
     // postConditionMode: PostConditionMode.Allow,
     appDetails,
     onFinish: (data: any) => {

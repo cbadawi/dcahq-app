@@ -3,9 +3,9 @@ import { useState } from "react"
 import { Pie } from "@visx/shape"
 import { Group } from "@visx/group"
 import { Text } from "@visx/text"
-import { colors } from "../../common/helpers"
+import { colors } from "../../common/utils/helpers"
 import { PieArcDatum } from "@visx/shape/lib/shapes/Pie"
-import { prettyPrice } from "../../common/prettyCV"
+import { prettyPrice } from "../../common/utils/prettyCV"
 
 export interface PieChartProps {
   // data: any[]

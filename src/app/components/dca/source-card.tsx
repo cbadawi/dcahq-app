@@ -9,20 +9,16 @@ import {
   targetTokens,
   tokenMap,
   Tokens
-} from "@/src/app/common/helpers"
-import { prettyBalance, prettyPrice } from "../../common/prettyCV"
+} from "@/src/app/common/utils/helpers"
+import { prettyBalance, prettyPrice } from "../../common/utils/prettyCV"
 import { StacksMainnet } from "@stacks/network"
 import InputAmount from "./input-amount"
 import TokenSelector from "../token-selector"
-import {
-  getPrice,
-  getPriceParams,
-  getPriceUsd
-} from "../../common/functionCalls/getPrice"
+import { getPriceUsd } from "../../common/functionCalls/getPrice"
 import {
   getAvailableSourceTokens,
   getAvailableTargetTokens
-} from "../../common/filter-tokens"
+} from "../../common/utils/filter-tokens"
 
 interface SourceComponentProps {
   sourceToken: Tokens

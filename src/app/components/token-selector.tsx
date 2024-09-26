@@ -3,7 +3,7 @@ import { Box, Flex, HStack } from "styled-system/jsx"
 import DownChevron from "./icons/down-chevron"
 import Image from "next/image"
 import Dropdown from "./dropdown"
-import { tokenMap, Tokens } from "../common/helpers"
+import { tokenMap, Tokens } from "../common/utils/helpers"
 
 interface TokenSelectorProps {
   options: Tokens[]

@@ -11,7 +11,7 @@ import {
   dcaManagerName,
   tokenMap,
   Tokens
-} from "../../helpers"
+} from "../../utils/helpers"
 import { StacksMainnet } from "@stacks/network"
 
 export async function getPrice(params: {
@@ -48,7 +48,7 @@ export async function getPrice(params: {
   }
 
   const response = await callReadOnlyFunction(options)
-  console.log("velar price", {
+  console.log("velar get-price-b getprice", {
     velarprice: response,
     token0,
     tokenIn,

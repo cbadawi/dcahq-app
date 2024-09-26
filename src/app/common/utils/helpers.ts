@@ -3,27 +3,55 @@ export const maxJavascriptNumber = 9007199254740991
 export const defaultFactor = 100_000_000
 
 export const appName = "DCA HQ"
-const version = "-v1"
+const version = "-v2"
 export const contractDeployer = "SPNG8GDC6VW6SPAGE5M9ZCASPJWK65NDTH2E84HX"
-
+export const burnAddress = "SP000000000000000000002Q6VF78"
 export const authName = "auth" + version
-export const dcaManagerName = "dca-manager" + version // + "-1"
+export const dcaManagerName = "dca-manager" + version
 export const dcaVaultName = "dca-vault" + version
-export const defaultStrategyName = "default-strategy" + version //+ "-0"
-export const strategyName = "strategy" + "v0" // version
+export const defaultStrategyName = "default-strategy" + version
+export const strategyName = "strategy" + version
+
+export const dcaManagerContract = contractDeployer + "." + dcaManagerName
 
 export const defaultStrategyContract =
   contractDeployer + "." + defaultStrategyName
+
+export const dcaUsersAlexFunction = "dca-users-a"
+
+export type UserKey = {
+  interval: number
+  strategy: string
+  source: string
+  target: string
+}
+
+export type DcaData = {
+  isPaused: boolean
+  amount: string
+  sourceAmountLeft: string
+  targetAmount: string
+  minPrice: string
+  maxPrice: string
+  lastUpdatedTimestamp: string
+}
 
 export const ONE_6 = 10 ** 6
 export const ONE_8 = 10 ** 8
 
 export const alex = "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM"
 
+// cant add seconds values to the enums since i want to follow the contract as close as possible, will need its own map
 export enum Intervals {
   hours2,
   daily,
   weekly
+}
+
+export const intervalSeconds = {
+  [Intervals.hours2]: 2 * 60 * 60,
+  [Intervals.daily]: 24 * 60 * 60,
+  [Intervals.weekly]: 7 * 24 * 60 * 60
 }
 
 export enum AMM {
@@ -88,10 +116,23 @@ export const welshContract =
 export const velarWelshDecimal = 6
 
 export const stxWrappers = [Tokens.ASTX, Tokens.VSTX]
+export const stxPlaceholderContract = "ddd.stx" as Contract
+
+export type Contract = `${string}.${string}`
+
+export const contractMap: { [key: Contract]: Tokens } = {
+  [stxPlaceholderContract]: Tokens.STX,
+  [alexWStxContract]: Tokens.ASTX,
+  [alexUsdtContract]: Tokens.AUSDT,
+  [alexWelshContract]: Tokens.AWWELSH,
+  [velarWstxContract]: Tokens.VSTX,
+  [velarAeusdcContract]: Tokens.VAEUSDC,
+  [welshContract]: Tokens.VWELSH
+}
 
 export const tokenMap: {
   [key in Tokens]: {
-    contract: `${string}.${string}`
+    contract: Contract //
     decimal: number
     assetName: string
     image: string
@@ -99,7 +140,7 @@ export const tokenMap: {
   }
 } = {
   [Tokens.STX]: {
-    contract: ".stx",
+    contract: stxPlaceholderContract,
     image: "/stx.svg",
     decimal: 6,
     assetName: "stx",
@@ -153,40 +194,70 @@ export const tokenMap: {
 
 export const stableCoins = [Tokens.AUSDT, Tokens.VAEUSDC]
 
-type AlexTokenCombinations = {
+type AlexPairCombinations = {
   [key in Tokens]?: {
-    [key in Tokens]?: { factor: number }
+    [key in Tokens]?: { factor: number; isSourceNumerator: boolean }
   }
 }
 
-type VelarTokenCombinations = {
+type VelarPairCombinations = {
   [key in Tokens]?: {
-    [key in Tokens]?: { poolId: number; token0: Tokens }
+    [key in Tokens]?: {
+      poolId: number
+      token0: Tokens
+      isSourceNumerator: boolean
+      isSourceToken0: boolean
+    }
   }
 }
 
-export const alexTokenConfig: AlexTokenCombinations = {
+export const alexPairConfig: AlexPairCombinations = {
   [Tokens.ASTX]: {
-    [Tokens.AUSDT]: { factor: defaultFactor },
-    [Tokens.AWWELSH]: { factor: defaultFactor }
+    [Tokens.AUSDT]: { factor: defaultFactor, isSourceNumerator: false },
+    [Tokens.AWWELSH]: { factor: defaultFactor, isSourceNumerator: true }
   },
   [Tokens.AUSDT]: {
-    [Tokens.ASTX]: { factor: defaultFactor },
-    [Tokens.AWWELSH]: { factor: defaultFactor }
+    [Tokens.ASTX]: { factor: defaultFactor, isSourceNumerator: false },
+    [Tokens.AWWELSH]: { factor: defaultFactor, isSourceNumerator: false }
   }
 }
-export const velarTokenConfig: VelarTokenCombinations = {
+export const velarPairConfig: VelarPairCombinations = {
   [Tokens.VSTX]: {
-    [Tokens.VAEUSDC]: { poolId: 6, token0: Tokens.VSTX },
-    [Tokens.VWELSH]: { poolId: 27, token0: Tokens.VSTX }
+    [Tokens.VAEUSDC]: {
+      poolId: 6,
+      token0: Tokens.VSTX,
+      isSourceNumerator: false,
+      isSourceToken0: true
+    },
+    [Tokens.VWELSH]: {
+      poolId: 27,
+      token0: Tokens.VSTX,
+      isSourceNumerator: false,
+      isSourceToken0: true
+    }
   },
   [Tokens.VAEUSDC]: {
-    [Tokens.VSTX]: { poolId: 6, token0: Tokens.VSTX },
-    [Tokens.VWELSH]: { poolId: 10, token0: Tokens.VWELSH } // disabled in tokens filtering
+    [Tokens.VSTX]: {
+      poolId: 6,
+      token0: Tokens.VSTX,
+      isSourceNumerator: false,
+      isSourceToken0: false
+    },
+    [Tokens.VWELSH]: {
+      poolId: 10,
+      token0: Tokens.VWELSH,
+      isSourceNumerator: false,
+      isSourceToken0: false
+    } // disabled in tokens filtering
   },
   [Tokens.VWELSH]: {
     // [Tokens.VAEUSDC]: { poolId: 10, token0: Tokens.VWELSH }
-    [Tokens.VSTX]: { poolId: 27, token0: Tokens.VSTX }
+    [Tokens.VSTX]: {
+      poolId: 27,
+      token0: Tokens.VSTX,
+      isSourceNumerator: false,
+      isSourceToken0: false
+    }
   }
 }
 

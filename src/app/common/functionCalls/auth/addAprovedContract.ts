@@ -1,5 +1,5 @@
 import { principalCV } from "@stacks/transactions"
-import { appName } from "../../helpers"
+import { appName } from "../../utils/helpers"
 import { StacksMainnet } from "@stacks/network"
 import { openContractCall } from "@stacks/connect"
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { Box, Flex, VStack } from "@/styled-system/jsx"
-import { tokenMap, Tokens } from "@/src/app/common/helpers"
+import { tokenMap, Tokens } from "@/src/app/common/utils/helpers"
 import { css } from "@/styled-system/css"
 import { getPrice, getPriceUsd } from "../../common/functionCalls/getPrice"
-import { prettyBalance } from "../../common/prettyCV"
+import { prettyBalance } from "../../common/utils/prettyCV"
 import { StacksMainnet } from "@stacks/network"
 import TokenSelector from "../token-selector"
 
