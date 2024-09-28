@@ -16,7 +16,7 @@ import {
 } from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 import { onFinishTx } from "../../tx-handlers"
-import { appDetails } from "../../appDetails"
+import { getAppDetails } from "../../appDetails"
 
 export const setUserDcaData = async (
   network: StacksMainnet,
@@ -78,7 +78,7 @@ export const setUserDcaData = async (
     network,
     // postConditions,
     // postConditionMode: PostConditionMode.Allow,
-    appDetails,
+    appDetails: getAppDetails(),
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
       onFinishTx(data)

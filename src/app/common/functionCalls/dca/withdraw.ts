@@ -16,7 +16,7 @@ import {
 } from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 import { getPostConditions } from "../getPostConditions"
-import { appDetails } from "../../appDetails"
+import { getAppDetails } from "../../appDetails"
 import { onFinishTx } from "../../tx-handlers"
 
 export const withdraw = async (
@@ -69,7 +69,7 @@ export const withdraw = async (
     network,
     postConditions: getPostConditions(targetToken, withdrawAmount, address),
     // postConditionMode: PostConditionMode.Allow,
-    appDetails,
+    appDetails: getAppDetails(),
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
       onFinishTx(data)

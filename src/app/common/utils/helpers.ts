@@ -119,6 +119,11 @@ export const stxWrappers = [Tokens.ASTX, Tokens.VSTX]
 export const stxPlaceholderContract = "ddd.stx" as Contract
 
 export type Contract = `${string}.${string}`
+export type ValuePieChartData = {
+  token: string
+  value: number
+  amount: string | number
+}
 
 export const contractMap: { [key: Contract]: Tokens } = {
   [stxPlaceholderContract]: Tokens.STX,

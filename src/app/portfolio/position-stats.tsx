@@ -1,4 +1,4 @@
-import { type ChangeEvent } from "react"
+import { useRef, type ChangeEvent } from "react"
 import { StacksMainnet } from "@stacks/network"
 import React, { useEffect, useState } from "react"
 import {
@@ -6,10 +6,11 @@ import {
   contractMap,
   DcaData,
   tokenMap,
+  Tokens,
   UserKey
 } from "../common/utils/helpers"
 import { getDcaData } from "../common/functionCalls/getDcaData"
-import { Box, Grid, HStack, styled } from "@/styled-system/jsx"
+import { Box, Flex, Grid, HStack, styled, VStack } from "@/styled-system/jsx"
 import SourceTargetImageStack from "./source-target-image-stack"
 import HamburgerIcon from "../components/icons/hamburger"
 import { prettyBalance, prettyPrice } from "../common/utils/prettyCV"
@@ -26,15 +27,27 @@ import {
   handleFunctionCallError,
   handleFunctionCallTx
 } from "../common/tx-handlers"
+import Dropdown from "../components/dropdown"
+import { withdraw } from "../common/functionCalls/dca/withdraw"
+import Modal from "../components/modal"
+import InputAmount from "../components/dca/input-amount"
+import { addToPosition } from "../common/functionCalls/dca/addToPosition"
+import { reducePosition } from "../common/functionCalls/dca/reducePosition"
 
 const PositionStats = ({
   address,
   network,
-  userKey
+  userKey,
+  onDcaDataFetching
 }: {
   address: string
   network: StacksMainnet
   userKey: UserKey
+  onDcaDataFetching?: (
+    data: DcaData,
+    sourceValue: number,
+    targetValue: number
+  ) => void
 }) => {
   const [dcaData, setDcaData] = useState<DcaData | null>(null)
   const [isPaused, setIsPaused] = useState(false)
@@ -43,8 +56,21 @@ const PositionStats = ({
   const [maxPrice, setMaxPrice] = useState("")
   const [buyAmount, setBuyAmount] = useState("")
   const [txID, setTxId] = useState("")
+  const [modal, setModal] = useState(false)
+  const [modalStatus, setModalStatus] = useState<
+    "withdraw" | "add" | "reduce" | ""
+  >("")
+  const [modalInputAmount, setModalInputAmount] = useState("")
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
+
+  // const renderCount = useRef(0)
+  // renderCount.current += 1
+  // console.log(`This PositionStats has rendered ${renderCount.current} times`)
 
   useEffect(() => {
+    console.log("PositionStats 1")
     if (!userKey) return
     const fetchData = async () => {
       const dcaData = await getDcaData(
@@ -55,19 +81,14 @@ const PositionStats = ({
         userKey.strategy,
         network
       )
-      console.log({ dcaData })
+      if (!dcaData) return
+      console.log("dcaData !!!", { dcaData })
       setDcaData(dcaData)
 
-      if (dcaData) {
-        setIsPaused(dcaData.isPaused)
-        setMinPrice(
-          `${parseInt(dcaData.minPrice) / 10 ** sourceDetails.decimal}`
-        )
-        setMaxPrice(
-          `${parseInt(dcaData.maxPrice) / 10 ** sourceDetails.decimal}`
-        )
-        setIsPaused(dcaData.isPaused)
-      }
+      setIsPaused(dcaData.isPaused)
+      setMinPrice(`${parseInt(dcaData.minPrice) / 10 ** sourceDetails.decimal}`)
+      setMaxPrice(`${parseInt(dcaData.maxPrice) / 10 ** sourceDetails.decimal}`)
+      setIsPaused(dcaData.isPaused)
 
       const setPriceAsync = async () => {
         const sourcePriceParams = getPriceParams(sourceToken, network)
@@ -81,6 +102,9 @@ const PositionStats = ({
 
         const relativePrice = sourcePrice / targetPrice
         setRelativePrice(relativePrice)
+        if (onDcaDataFetching)
+          onDcaDataFetching(dcaData, sourcePrice, targetPrice)
+
         console.log({
           source: userKey.source,
           target: userKey.target,
@@ -92,7 +116,7 @@ const PositionStats = ({
     }
 
     fetchData()
-  }, [address, userKey])
+  }, [address])
 
   // todo rename it to something more generic like primary/secondary
   const Button = styled("button", connectWalletRecipe)
@@ -126,6 +150,76 @@ const PositionStats = ({
     setBuyAmount(value)
   }
 
+  const onSelect = (option: any) => {
+    setModalStatus(option.split(" ")[0] ?? "")
+    setModal(true)
+  }
+  const renderModal = () => {
+    let title = ""
+    let callbackFunc
+    switch (modalStatus.toLowerCase()) {
+      case `withdraw`:
+        title = `Withdraw`
+        callbackFunc = () =>
+          withdraw(
+            network,
+            address,
+            sourceToken,
+            targetToken,
+            userKey.interval,
+            userKey.strategy,
+            modalInputAmount,
+            setTxId
+          )
+      case `add`:
+        title = `Add To Position `
+        callbackFunc = () =>
+          addToPosition(
+            network,
+            address,
+            sourceToken,
+            targetToken,
+            userKey.interval,
+            userKey.strategy,
+            modalInputAmount,
+            setTxId
+          )
+      case `reduce`:
+        title = `Reduce Position `
+        callbackFunc = () =>
+          reducePosition(
+            network,
+            address,
+            sourceToken,
+            targetToken,
+            userKey.interval,
+            userKey.strategy,
+            modalInputAmount,
+            setTxId
+          )
+      default:
+        console.log(`Unknown option selected:` + modalStatus)
+    }
+
+    console.log("PositionStats 2")
+    return (
+      <VStack
+        maxWidth={"10rem"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        overflow={"hidden"}
+      >
+        <InputAmount
+          amount={modalInputAmount}
+          setAmount={setModalInputAmount}
+          name="Amount"
+          center={true}
+        />
+        <Button onClick={callbackFunc}>{title}</Button>
+      </VStack>
+    )
+  }
+
   if (!dcaData) return null
   // TODO using which amm?
   // Todo how many buy s left
@@ -154,7 +248,29 @@ const PositionStats = ({
             targetImage={targetDetails.image}
           />
         </HStack>
-        <HamburgerIcon />
+        <Flex onClick={toggleDropdown}>
+          <Box position={"relative"} minWidth={"10rem"}>
+            <Dropdown
+              options={[
+                `Withdraw ${targetDetails.displayName}`,
+                `Add ${sourceDetails.displayName}`,
+                `Reduce ${sourceDetails.displayName}`
+              ]}
+              onSelect={onSelect}
+              isDropdownOpen={isDropdownOpen}
+              setIsDropdownOpen={setIsDropdownOpen}
+              displayHandler={(o: string) => o}
+            />
+          </Box>
+          <HamburgerIcon />
+        </Flex>
+        <Modal
+          isVisible={modal}
+          onClose={() => setModal(false)}
+          setIsVisible={setModal}
+        >
+          {renderModal()}
+        </Modal>
       </HStack>
       <Grid
         gridTemplateColumns="repeat(2, 1fr)"

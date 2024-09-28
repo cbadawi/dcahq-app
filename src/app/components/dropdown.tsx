@@ -2,19 +2,21 @@ import React, { useEffect, useRef, useState } from "react"
 import { Box } from "styled-system/jsx"
 import { tokenMap, Tokens } from "../common/utils/helpers"
 
-interface DropdownProps {
-  options: Tokens[]
-  onSelect: (option: any) => void
+interface DropdownProps<T> {
+  options: T[]
+  onSelect: (option: T) => void
   isDropdownOpen: boolean
   setIsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>
+  displayHandler: (option: T) => string
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
+const Dropdown = <T,>({
   options,
   onSelect,
   isDropdownOpen,
-  setIsDropdownOpen
-}) => {
+  setIsDropdownOpen,
+  displayHandler
+}: DropdownProps<T>) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -56,7 +58,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     >
       {options.map((option, index) => (
         <Box
-          key={option + index}
+          key={`${option} + ${index}`}
           onClick={() => {
             onSelect(option)
             setIsDropdownOpen(false)
@@ -66,7 +68,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           fontSize="sm"
           _hover={{ bg: "#1a1b26", color: "orange" }}
         >
-          {tokenMap[option].displayName}
+          {displayHandler(option)}
         </Box>
       ))}
     </Box>

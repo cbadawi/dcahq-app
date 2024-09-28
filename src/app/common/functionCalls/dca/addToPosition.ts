@@ -1,22 +1,16 @@
 "use client"
-import {
-  uintCV,
-  principalCV,
-  ContractCallOptions,
-  boolCV
-} from "@stacks/transactions"
+import { uintCV, principalCV, ContractCallOptions } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network"
 import {
   contractDeployer,
   dcaManagerName,
   defaultStrategyContract,
-  maxUint128,
   tokenMap,
   Tokens
 } from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 import { getPostConditions } from "../getPostConditions"
-import { appDetails } from "../../appDetails"
+import { getAppDetails } from "../../appDetails"
 import { onFinishTx } from "../../tx-handlers"
 
 // (define-public (add-to-position (source-trait <ft-trait-b>) (target principal) (interval uint) (strategy principal) (amount uint))
@@ -70,7 +64,7 @@ export const addToPosition = async (
     network,
     postConditions: getPostConditions(sourceToken, addAmount, address),
     // postConditionMode: PostConditionMode.Allow,
-    appDetails,
+    appDetails: getAppDetails(),
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
       onFinishTx(data)

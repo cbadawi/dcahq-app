@@ -20,7 +20,7 @@ export async function getDcaData(
   interval: number,
   strategy: string,
   network: StacksMainnet
-) {
+): Promise<DcaData | undefined> {
   const functionArgs = [
     principalCV(user),
     principalCV(source),
@@ -38,7 +38,7 @@ export async function getDcaData(
   }
 
   const response = await callReadOnlyFunction(options)
-  if (response.type == 9) return null // noneCV
+  if (response.type == 9) return undefined // noneCV
   const dcaDataValue = cvToValue(response)
   return parseToDcaData(dcaDataValue)
 }

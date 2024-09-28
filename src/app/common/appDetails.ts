@@ -1,6 +1,5 @@
 import { appName } from "./utils/helpers"
 
-export const appDetails = {
-  name: appName,
-  icon: window.location.origin + "/logo.png"
+export const getAppDetails = () => {
+  return { name: appName, icon: window.location.origin + "/logo.png" }
 }

@@ -25,7 +25,7 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({
       viewBox="0 0 64 64"
       onClick={onClick}
       className={`${className} rotatable-svg`}
-      style={{ cursor: onClick ? "pointer" : "default" }}
+      style={{ cursor: "pointer" }}
     >
       {/* Define a single linear gradient */}
       <defs>

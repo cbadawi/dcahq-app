@@ -16,7 +16,7 @@ import {
 } from "../../utils/helpers"
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 import { getPostConditions } from "../getPostConditions"
-import { appDetails } from "../../appDetails"
+import { getAppDetails } from "../../appDetails"
 import { onFinishTx } from "../../tx-handlers"
 
 // (define-public (add-to-position (source-trait <ft-trait-b>) (target principal) (interval uint) (strategy principal) (amount uint))
@@ -70,7 +70,7 @@ export const reducePosition = async (
     network,
     postConditions: getPostConditions(sourceToken, reduceAmount, address),
     // postConditionMode: PostConditionMode.Allow,
-    appDetails,
+    appDetails: getAppDetails(),
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
       onFinishTx(data)

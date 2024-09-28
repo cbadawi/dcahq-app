@@ -12,7 +12,7 @@ import {
 import { ContractCallRegularOptions, openContractCall } from "@stacks/connect"
 import { getPostConditions } from "../getPostConditions"
 import { onFinishTx } from "../../tx-handlers"
-import { appDetails } from "../../appDetails"
+import { getAppDetails } from "../../appDetails"
 
 export const createDCA = async (
   sourceToken: Tokens,
@@ -84,7 +84,7 @@ export const createDCA = async (
     network,
     postConditions,
     // postConditionMode: PostConditionMode.Allow,
-    appDetails,
+    appDetails: getAppDetails(),
     onFinish: (data: any) => {
       if (setTxId) setTxId(data.txId)
       onFinishTx(data)

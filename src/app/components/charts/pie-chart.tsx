@@ -3,12 +3,13 @@ import { useState } from "react"
 import { Pie } from "@visx/shape"
 import { Group } from "@visx/group"
 import { Text } from "@visx/text"
-import { colors } from "../../common/utils/helpers"
+import { colors, ValuePieChartData } from "../../common/utils/helpers"
 import { PieArcDatum } from "@visx/shape/lib/shapes/Pie"
 import { prettyPrice } from "../../common/utils/prettyCV"
 
 export interface PieChartProps {
-  // data: any[]
+  data: ValuePieChartData[]
+  name: string
   // height: number
   // width: number
   // xName: string
@@ -16,24 +17,18 @@ export interface PieChartProps {
   // errorHandler?: (msg: string) => void
 }
 
-export default function PieChart(
-  {
-    // data,
-    // xName,
-    // yName,
-    // errorHandler
-  }: PieChartProps
-) {
-  const [active, setActive] = useState<Data | null>(null)
+export default function PieChart({
+  data,
+  name
+  // xName,
+  // yName,
+  // errorHandler
+}: PieChartProps) {
+  const [active, setActive] = useState<ValuePieChartData | null>(null)
   const width = 250
   const half = width / 2
 
-  type Data = { source: string; target: string; valueUsd: number }
-  const data: Data[] = [
-    { source: "source1", target: "target1", valueUsd: 100 },
-    { source: "source2", target: "target2", valueUsd: 400 },
-    { source: "source3", target: "target3", valueUsd: 200 }
-  ]
+  console.log({ piechartdata: data })
 
   if (!data.length) return null
   return (
@@ -41,11 +36,11 @@ export default function PieChart(
       <Group top={width / 2} left={width / 2}>
         <Pie
           data={data}
-          pieValue={data => data["valueUsd"]}
+          pieValue={data => data.value}
           outerRadius={half}
           innerRadius={({ data }) => {
             const activeSizeDelta =
-              active && active["source"] == data["source"] ? 32 : 16
+              active && active.token == data.token ? 32 : 16
             return half - activeSizeDelta
           }}
           padAngle={0.03}
@@ -54,7 +49,7 @@ export default function PieChart(
             return pie.arcs.map((arc, index) => {
               return (
                 <g
-                  key={arc.data["source"]}
+                  key={arc.data.token}
                   onMouseEnter={() => setActive(arc.data)}
                   onMouseLeave={() => setActive(null)}
                 >
@@ -67,19 +62,19 @@ export default function PieChart(
         {active ? (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={20} dy={-15}>
-              {active.source}
+              {`${active.amount} ${active.token}`}
             </Text>
-            <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={15}>
-              {`$${prettyPrice(active.valueUsd)}`}
-            </Text>
+            {/* <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={15}>
+              {`STX ${prettyPrice(active.value)}`}
+            </Text> */}
           </>
         ) : (
           <>
             <Text textAnchor="middle" fill="#fff" fontSize={20} dy={-15}>
-              {data.length + " Source" + (data.length == 1 ? "" : "s")}
+              {data.length + ` ${name}` + (data.length == 1 ? "" : "s")}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={15}>
-              {`$ ${Math.floor(data.reduce((acc, d) => acc + d["valueUsd"], 0))}`}
+              {`STX ${Math.floor(data.reduce((acc, d) => acc + d["value"], 0))}`}
             </Text>
           </>
         )}

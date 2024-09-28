@@ -1,11 +1,11 @@
 "use client"
 import React, { useEffect } from "react"
-
 import { showConnect, UserData } from "@stacks/connect"
 import { prettyAddress } from "@/src/app/common/utils/prettyCV"
 import { useUser } from "@/src/app/contexts/UserProvider"
 import { connectWalletRecipe } from "./connect-wallet-recipe"
 import { styled } from "@/styled-system/jsx"
+import { getAppDetails } from "../../common/appDetails"
 
 interface ConnectWalletProps {
   variant?: "default" | "createDcaButton"
@@ -26,10 +26,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
     }
 
     showConnect({
-      appDetails: {
-        name: "Sup",
-        icon: "https://assets.website-files.com/618b0aafa4afde65f2fe38fe/618b0aafa4afde2ae1fe3a1f_icon-isotipo.svg"
-      },
+      appDetails: getAppDetails(),
       redirectTo: "/",
       onFinish: () => {
         window.location.reload()

@@ -6,11 +6,13 @@ import { VStack } from "@/styled-system/jsx"
 const InputAmount = ({
   amount,
   setAmount,
-  name
+  name,
+  center
 }: {
   amount: string
   setAmount: (amount: string) => void
   name: string
+  center?: boolean
 }) => {
   const [query, setQuery] = useState("")
 
@@ -20,7 +22,13 @@ const InputAmount = ({
   }, [query])
 
   return (
-    <VStack gap={0} className={css({ alignItems: "flex-end", width: "100%" })}>
+    <VStack
+      gap={0}
+      className={css({
+        alignItems: center ? "center" : "flex-end",
+        width: "100%"
+      })}
+    >
       <label
         htmlFor="total-amount"
         className={css({
@@ -50,7 +58,7 @@ const InputAmount = ({
           color: amount ? "white" : "lightcyan",
           fontWeight: "light",
           fontSize: "xl",
-          textAlign: "right",
+          textAlign: center ? "center" : "right",
           bg: "transparent",
           border: "none",
           outline: "none",

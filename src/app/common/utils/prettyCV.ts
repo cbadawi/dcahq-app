@@ -14,7 +14,6 @@ export function prettyBalance(
   dec = 8,
   showDec = true
 ): string {
-  console.log("!!! prettyBalance start", balance)
   if (typeof balance === "number" && isNaN(balance)) return "0"
   if (typeof balance === "bigint" && balance === BigInt(0)) return "0"
   const numberBalance = Number(`${balance}`) / Number(10 ** dec)

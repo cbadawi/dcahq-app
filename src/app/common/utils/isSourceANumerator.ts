@@ -26,7 +26,10 @@ export function isSourceANumerator(source: Tokens, target: Tokens) {
 export function getPriceRatioDisplay(source: Tokens, target: Tokens) {
   const sourceDisplay = tokenMap[source].displayName
   const targetDisplay = tokenMap[target].displayName
-  return isSourceANumerator(source, target)
-    ? `${sourceDisplay}/${targetDisplay}`
-    : `${targetDisplay}/${sourceDisplay}`
+  return (
+    (isSourceANumerator(source, target)
+      ? `${sourceDisplay}/${targetDisplay}`
+      : `${targetDisplay}/${sourceDisplay}`
+    ).toLowerCase() + " price"
+  )
 }

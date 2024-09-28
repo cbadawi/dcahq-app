@@ -29,7 +29,7 @@ const NoPositionsFound = () => {
             })}
           >
             - Low Fees:
-          </span>{" "}
+          </span>
           You only cover transaction costs, keeping your expenses minimal.
         </li>
         <li

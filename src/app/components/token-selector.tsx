@@ -20,6 +20,11 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
+
+  const displayHandler = (option: Tokens) => {
+    return tokenMap[option].displayName
+  }
+
   return (
     <Box position={"relative"}>
       <Flex
@@ -57,6 +62,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
         onSelect={onSelect}
         isDropdownOpen={isDropdownOpen}
         setIsDropdownOpen={setIsDropdownOpen}
+        displayHandler={displayHandler}
       />
     </Box>
   )
