@@ -37,17 +37,11 @@ import { reducePosition } from "../common/functionCalls/dca/reducePosition"
 const PositionStats = ({
   address,
   network,
-  userKey,
-  onDcaDataFetching
+  userKey
 }: {
   address: string
   network: StacksMainnet
   userKey: UserKey
-  onDcaDataFetching?: (
-    data: DcaData,
-    sourceValue: number,
-    targetValue: number
-  ) => void
 }) => {
   const [dcaData, setDcaData] = useState<DcaData | null>(null)
   const [isPaused, setIsPaused] = useState(false)
@@ -65,12 +59,7 @@ const PositionStats = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
 
-  // const renderCount = useRef(0)
-  // renderCount.current += 1
-  // console.log(`This PositionStats has rendered ${renderCount.current} times`)
-
   useEffect(() => {
-    console.log("PositionStats 1")
     if (!userKey) return
     const fetchData = async () => {
       const dcaData = await getDcaData(
@@ -82,7 +71,6 @@ const PositionStats = ({
         network
       )
       if (!dcaData) return
-      console.log("dcaData !!!", { dcaData })
       setDcaData(dcaData)
 
       setIsPaused(dcaData.isPaused)
@@ -102,8 +90,8 @@ const PositionStats = ({
 
         const relativePrice = sourcePrice / targetPrice
         setRelativePrice(relativePrice)
-        if (onDcaDataFetching)
-          onDcaDataFetching(dcaData, sourcePrice, targetPrice)
+        // if (onDcaDataFetching)
+        // onDcaDataFetching(dcaData, sourcePrice, targetPrice)
 
         console.log({
           source: userKey.source,
