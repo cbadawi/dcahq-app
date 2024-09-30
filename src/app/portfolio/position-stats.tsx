@@ -273,11 +273,6 @@ const PositionStats = ({
           label={`${targetDetails.displayName} Rewards`}
           prettier={prettyBalance}
         />
-        <LabelInput input={`${0}`} label="Next Buy In" />
-        <LabelInput
-          input={`${dcaData.lastUpdatedTimestamp}`}
-          label="Last Buy Time"
-        />
         <LabelInput
           input={`${Number(dcaData.sourceAmountLeft)}`}
           label={`${sourceDetails.displayName} Left`}
@@ -285,6 +280,12 @@ const PositionStats = ({
             prettyBalance(balance, sourceDetails.decimal)
           }
         />
+        <LabelInput input={`${0}`} label="Next Buy In" />
+        <LabelInput
+          input={`${dcaData.lastUpdatedTimestamp}`}
+          label="Last Buy Time"
+        />
+
         <LabelInput
           input={BigInt(dcaData.sourceAmountLeft) / BigInt(dcaData.amount)}
           label="Buys Left"
