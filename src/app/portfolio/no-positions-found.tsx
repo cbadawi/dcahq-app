@@ -4,13 +4,23 @@ import React from "react"
 
 const NoPositionsFound = () => {
   return (
-    <VStack justifyContent="center">
+    <VStack
+      justifyContent="center"
+      className={css({
+        backgroundImage: "url('/dashboard.png')", // Path to the background image
+        backgroundSize: "cover", // Ensure the background covers the entire container
+        backgroundPosition: "center", // Center the image
+        height: "100vh", // Full viewport height, adjust if needed
+        padding: "2rem" // Padding for content
+      })}
+    >
       <span
         className={css({
           fontSize: "1.5rem",
           fontWeight: "bold",
           marginBottom: "1rem",
-          display: "block"
+          display: "block",
+          color: "#fff" // Optional: Adjust text color for contrast
         })}
       >
         It looks like you don&apos;t have any active DCA (Dollar Cost Averaging)
@@ -20,7 +30,8 @@ const NoPositionsFound = () => {
         <li
           className={css({
             fontSize: "1.2rem",
-            marginBottom: "0.5rem"
+            marginBottom: "0.5rem",
+            color: "#fff" // Optional: Adjust text color for contrast
           })}
         >
           <span
@@ -35,7 +46,8 @@ const NoPositionsFound = () => {
         <li
           className={css({
             fontSize: "1.2rem",
-            marginBottom: "0.5rem"
+            marginBottom: "0.5rem",
+            color: "#fff" // Optional: Adjust text color for contrast
           })}
         >
           <span
@@ -51,7 +63,8 @@ const NoPositionsFound = () => {
         <li
           className={css({
             fontSize: "1.2rem",
-            marginBottom: "0.5rem"
+            marginBottom: "0.5rem",
+            color: "#fff" // Optional: Adjust text color for contrast
           })}
         >
           <span
@@ -67,7 +80,8 @@ const NoPositionsFound = () => {
         <li
           className={css({
             fontSize: "1.2rem",
-            marginBottom: "0.5rem"
+            marginBottom: "0.5rem",
+            color: "#fff" // Optional: Adjust text color for contrast
           })}
         >
           <span
