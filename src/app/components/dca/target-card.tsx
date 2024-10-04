@@ -81,7 +81,7 @@ const TargetCard: React.FC<TargetComponentProps> = ({
             className={css({
               marginRight: "0.5rem",
               width: "50%",
-              padding: "0.5rem",
+              padding: ["0", "0.5rem"],
               color: "grey",
               fontWeight: "light",
               textAlign: "right",

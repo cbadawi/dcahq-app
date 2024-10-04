@@ -6,7 +6,7 @@ const HeaderBanner = ({ children }: { children: ReactNode }) => {
     <span
       className={css({
         display: "inline-block",
-        fontSize: "1.5rem",
+        fontSize: ["1rem", "1.25rem", "1.5rem"],
         fontWeight: "bold",
         lineHeight: "1.4",
         textAlign: "center",

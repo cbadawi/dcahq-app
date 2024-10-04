@@ -12,7 +12,7 @@ const Navbar = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        px: "1rem",
+        px: ["", "1rem"],
         py: "0.5rem",
         backgroundColor: "#131721"
       })}`}
@@ -30,8 +30,9 @@ const Navbar = () => {
           }
         })}
       >
-        <Flex gap={3} alignItems="center">
+        <Flex gap={[0, 3]} alignItems="center">
           <Image
+            className={css({ display: ["none", "block"] })}
             src="/favicon.ico"
             width={30}
             height={40}
@@ -45,7 +46,7 @@ const Navbar = () => {
         className={css({
           display: "flex",
           listStyle: "none",
-          gap: "1rem",
+          gap: [0, "1rem"],
           alignItems: "center",
           margin: 0
         })}
@@ -74,18 +75,20 @@ const Navbar = () => {
             href="/"
             className={css({
               color: "white",
-              padding: "0.25rem 1rem", // Add padding for a nicer hover effect
-              border: "2px solid transparent", // Initial border setup
-              transition: "all 0.3s ease", // Smooth transition on hover
+              display: "flex",
+              padding: ["0.02rem", "0.25rem 1rem"],
+              flexDirection: ["column", "row"],
+              border: "2px solid transparent",
+              transition: "all 0.3s ease",
               _hover: {
                 bg: "#15161f",
                 borderRadius: "12px",
-                color: "orange", // Change color to orange
-                borderColor: "lightgrey" // Change border color to white
+                color: "orange",
+                borderColor: "lightgrey"
               }
             })}
           >
-            Strategies
+            <span>Strategies</span>
             <Soon />
           </Link>
         </li>

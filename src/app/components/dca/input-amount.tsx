@@ -25,7 +25,8 @@ const InputAmount = ({
     <VStack
       gap={0}
       className={css({
-        alignItems: center ? "center" : "flex-end",
+        textAlign: center ? "center" : ["center", "center", "right"],
+
         width: "100%"
       })}
     >
@@ -58,11 +59,11 @@ const InputAmount = ({
           color: amount ? "white" : "lightcyan",
           fontWeight: "light",
           fontSize: "xl",
-          textAlign: center ? "center" : "right",
+          textAlign: center ? "center" : ["center", "center", "right"],
           bg: "transparent",
           border: "none",
           outline: "none",
-          borderBottom: "1px solid gray"
+          borderBottom: ["", "", "1px solid gray"]
         })}
       />
     </VStack>

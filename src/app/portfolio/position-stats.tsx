@@ -232,7 +232,7 @@ const PositionStats = ({
       p="1rem"
       borderColor={"grey"}
       bg="#15161f"
-      width="700px"
+      width={["100%", "100%", "700px"]}
       maxWidth="800px"
       margin="auto"
     >
@@ -268,7 +268,7 @@ const PositionStats = ({
         </Modal>
       </HStack>
       <Grid
-        gridTemplateColumns="repeat(2, 1fr)"
+        gridTemplateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)"]}
         gap={4}
         mt="0.5rem"
         pb="0.5rem"
@@ -310,7 +310,7 @@ const PositionStats = ({
         {/* <Box mb="5rem">ww</Box> */}
       </Grid>
       <Grid
-        gridTemplateColumns="repeat(2, 1fr)"
+        gridTemplateColumns={["repeat(1, 1fr)", "repeat(2, 1fr)"]}
         gap={4}
         mt="0.5rem"
         pb="0.5rem"
@@ -336,7 +336,7 @@ const PositionStats = ({
           }
           handleChange={handleDcaAmountChange}
         />
-        <HStack justifyContent={"flex-end"} alignItems={"center"}>
+        <HStack justifyContent={["none", "flex-end"]} alignItems={"center"}>
           <span>Pause</span>
           <Toggle
             inputValue={"isPaused"}

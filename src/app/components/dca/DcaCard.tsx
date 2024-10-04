@@ -77,7 +77,7 @@ const DcaCard = () => {
         p="1rem"
         borderColor={"grey"}
         bg="#15161f"
-        width="700px"
+        width={["100%", "100%", "700px"]}
         maxWidth="800px"
         margin="auto"
       >

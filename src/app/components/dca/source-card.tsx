@@ -97,12 +97,13 @@ const SourceCard = ({
     >
       <VStack width="100%">
         <Flex
-          justifyContent="space-between"
-          alignItems="center"
+          flexDirection={["column", "column", "row"]}
+          alignItems={["flex-start", "flex-start", "center"]}
           width="100%"
-          gap={"1.5rem"}
+          gap={["0", "0", "1.5rem"]}
+          justifyContent="space-between"
         >
-          <Box m={"1rem"}>
+          <Box m={["0.5rem", "1rem"]}>
             <TokenSelector
               options={getAvailableSourceTokens(sourceTokens)}
               selectedOption={sourceToken}
@@ -124,11 +125,12 @@ const SourceCard = ({
         <HStack width="100%">
           <Flex
             justifyContent="space-between"
+            flexDirection={["column", "row"]}
             width="100%"
             color={"grey"}
-            mx="1rem"
+            mx={["0.5rem", "1rem"]}
             fontFamily={"sans-serif"}
-            fontSize={"medium"}
+            fontSize={["small", "medium"]}
           >
             <span>
               Balance: {prettyBalance(balance, sourceDetails.decimal)}

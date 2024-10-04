@@ -10,13 +10,13 @@ const NoPositionsFound = () => {
         backgroundImage: "url('/dashboard.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
+        // height: "100vh",
         padding: "2rem"
       })}
     >
       <span
         className={css({
-          fontSize: "1.5rem",
+          fontSize: ["lg", "x-large"],
           fontWeight: "bold",
           marginBottom: "1rem",
           display: "block",
@@ -29,7 +29,7 @@ const NoPositionsFound = () => {
       <ul>
         <li
           className={css({
-            fontSize: "1.2rem",
+            fontSize: ["md", "lg"],
             marginBottom: "0.5rem",
             color: "#fff" // Optional: Adjust text color for contrast
           })}
@@ -40,12 +40,12 @@ const NoPositionsFound = () => {
             })}
           >
             - Low Fees:
-          </span>
+          </span>{" "}
           You only cover transaction costs, keeping your expenses minimal.
         </li>
         <li
           className={css({
-            fontSize: "1.2rem",
+            fontSize: ["md", "lg"],
             marginBottom: "0.5rem",
             color: "#fff" // Optional: Adjust text color for contrast
           })}
@@ -62,7 +62,7 @@ const NoPositionsFound = () => {
         </li>
         <li
           className={css({
-            fontSize: "1.2rem",
+            fontSize: ["md", "lg"],
             marginBottom: "0.5rem",
             color: "#fff" // Optional: Adjust text color for contrast
           })}
@@ -79,7 +79,7 @@ const NoPositionsFound = () => {
         </li>
         <li
           className={css({
-            fontSize: "1.2rem",
+            fontSize: ["md", "lg"],
             marginBottom: "0.5rem",
             color: "#fff" // Optional: Adjust text color for contrast
           })}
