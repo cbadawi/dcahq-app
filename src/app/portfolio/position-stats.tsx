@@ -93,10 +93,11 @@ const PositionStats = ({
         // if (onDcaDataFetching)
         // onDcaDataFetching(dcaData, sourcePrice, targetPrice)
 
-        console.log({
+        console.log("position-stats", {
           source: userKey.source,
           target: userKey.target,
           relativePrice,
+          dcaData,
           issourcenumerator: isSourceANumerator(sourceToken, targetToken)
         })
       }
@@ -269,9 +270,11 @@ const PositionStats = ({
         borderBottom="1px solid grey"
       >
         <LabelInput
-          input={`${BigInt(dcaData.targetAmount) / BigInt(10 ** targetDetails.decimal)}`}
+          input={`${dcaData.targetAmount}`}
           label={`${targetDetails.displayName} Rewards`}
-          prettier={prettyBalance}
+          prettier={(balance: string) =>
+            prettyBalance(balance, sourceDetails.decimal)
+          }
         />
         <LabelInput
           input={`${Number(dcaData.sourceAmountLeft)}`}

@@ -1,3 +1,4 @@
+import { css } from "@/styled-system/css"
 import React from "react"
 
 interface HamburgerIconProps {
@@ -12,8 +13,7 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({
   size = 30,
   primaryColor = "white",
   secondaryColor = "orange",
-  onClick,
-  className = ""
+  onClick
 }) => {
   return (
     <svg
@@ -24,10 +24,14 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({
       height={size}
       viewBox="0 0 64 64"
       onClick={onClick}
-      className={`${className} rotatable-svg`}
-      style={{ cursor: "pointer" }}
+      className={css({
+        cursor: "pointer",
+        transition: "transform 0.3s ease, width 0.3s ease, height 0.3s ease",
+        "&:hover": {
+          transform: "rotate(90deg)"
+        }
+      })}
     >
-      {/* Define a single linear gradient */}
       <defs>
         <linearGradient
           id="grad1"
@@ -43,7 +47,6 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({
         </linearGradient>
       </defs>
 
-      {/* Outer circle */}
       <circle
         cx="32"
         cy="32"
@@ -53,7 +56,6 @@ const HamburgerIcon: React.FC<HamburgerIconProps> = ({
         fill="none"
       />
 
-      {/* Hamburger lines with gradient */}
       <rect x="20" y="22" width="24" height="2" fill="url(#grad1)" />
       <rect x="20" y="30" width="24" height="2" fill="url(#grad1)" />
       <rect x="20" y="38" width="24" height="2" fill="url(#grad1)" />

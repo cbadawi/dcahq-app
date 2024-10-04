@@ -7,11 +7,11 @@ const NoPositionsFound = () => {
     <VStack
       justifyContent="center"
       className={css({
-        backgroundImage: "url('/dashboard.png')", // Path to the background image
-        backgroundSize: "cover", // Ensure the background covers the entire container
-        backgroundPosition: "center", // Center the image
-        height: "100vh", // Full viewport height, adjust if needed
-        padding: "2rem" // Padding for content
+        backgroundImage: "url('/dashboard.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "100vh",
+        padding: "2rem"
       })}
     >
       <span
@@ -20,7 +20,7 @@ const NoPositionsFound = () => {
           fontWeight: "bold",
           marginBottom: "1rem",
           display: "block",
-          color: "#fff" // Optional: Adjust text color for contrast
+          color: "#fff"
         })}
       >
         It looks like you don&apos;t have any active DCA (Dollar Cost Averaging)

@@ -21,7 +21,7 @@ const Portfolio = () => {
               fontWeight: "bold"
             })}
           >
-            Portfolio
+            Your Portfolio
           </span>
         </div>
         <PortfolioStats />

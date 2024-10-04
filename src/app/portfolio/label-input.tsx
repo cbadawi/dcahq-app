@@ -21,9 +21,9 @@ const LabelInput = <T extends number | string | BigInt>({
 
   return (
     <HStack justifyContent="space-between" alignItems="center">
-      <text fontSize="md">{label}</text>
+      <span className={css({ fontSize: "md" })}>{label}</span>
       {isReadOnly ? (
-        <text
+        <span
           className={css({
             fontWeight: "bold",
             fontSize: "md",
@@ -32,7 +32,7 @@ const LabelInput = <T extends number | string | BigInt>({
           })}
         >
           {displayValue}
-        </text>
+        </span>
       ) : (
         <input
           className={css({
