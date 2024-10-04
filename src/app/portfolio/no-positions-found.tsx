@@ -10,7 +10,7 @@ const NoPositionsFound = () => {
         backgroundImage: "url('/dashboard.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        // height: "100vh",
+        height: "70vh",
         padding: "2rem"
       })}
     >
