@@ -36,7 +36,8 @@ const PortfolioStats = () => {
     asyncGetUserKeys()
   }, [])
 
-  if (!userKeys.length && !isLoading) return <NoPositionsFound />
+  if (!userSession?.isUserSignedIn() || (!userKeys.length && !isLoading))
+    return <NoPositionsFound />
   // cards per dca position with amounts, ETA
   // todo if you bought instead of DCA'd you would have had XX instead of YY
   return (
