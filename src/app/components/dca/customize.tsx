@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import DownChevron from "../icons/down-chevron"
 import { Box, Flex, HStack, VStack } from "@/styled-system/jsx"
 import { css } from "@/styled-system/css"
-import { prettyPrice } from "../../common/utils/prettyCV"
+import { prettyPrice } from "../../common/utils/pretty"
 import { tokenMap, Tokens } from "../../common/utils/helpers"
 import {
   getPriceRatioDisplay,

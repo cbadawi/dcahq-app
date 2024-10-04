@@ -10,7 +10,7 @@ import {
   tokenMap,
   Tokens
 } from "@/src/app/common/utils/helpers"
-import { prettyBalance, prettyPrice } from "../../common/utils/prettyCV"
+import { prettyBalance, prettyPrice } from "../../common/utils/pretty"
 import { StacksMainnet } from "@stacks/network"
 import InputAmount from "./input-amount"
 import TokenSelector from "../token-selector"

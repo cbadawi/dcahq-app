@@ -5,6 +5,8 @@ import {
   Contract,
   contractMap,
   DcaData,
+  Intervals,
+  intervalSeconds,
   tokenMap,
   Tokens,
   UserKey
@@ -13,7 +15,11 @@ import { getDcaData } from "../common/functionCalls/getDcaData"
 import { Box, Flex, Grid, HStack, styled, VStack } from "@/styled-system/jsx"
 import SourceTargetImageStack from "./source-target-image-stack"
 import HamburgerIcon from "../components/icons/hamburger"
-import { prettyBalance, prettyPrice } from "../common/utils/prettyCV"
+import {
+  prettyBalance,
+  prettyPrice,
+  prettyTimestamp
+} from "../common/utils/pretty"
 import LabelInput from "./label-input"
 import { getPrice, getPriceParams } from "../common/functionCalls/getPrice"
 import {
@@ -283,9 +289,12 @@ const PositionStats = ({
             prettyBalance(balance, sourceDetails.decimal)
           }
         />
-        <LabelInput input={`${0}`} label="Next Buy In" />
         <LabelInput
-          input={`${dcaData.lastUpdatedTimestamp}`}
+          input={`${prettyTimestamp((Number(dcaData.lastUpdatedTimestamp) + intervalSeconds[userKey.interval as Intervals]) * 1000)}`}
+          label="Next Buy In"
+        />
+        <LabelInput
+          input={`${prettyTimestamp(Number(dcaData.lastUpdatedTimestamp) * 1000)}`}
           label="Last Buy Time"
         />
 

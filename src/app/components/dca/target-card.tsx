@@ -3,7 +3,7 @@ import { Box, Flex, VStack } from "@/styled-system/jsx"
 import { tokenMap, Tokens } from "@/src/app/common/utils/helpers"
 import { css } from "@/styled-system/css"
 import { getPrice, getPriceUsd } from "../../common/functionCalls/getPrice"
-import { prettyBalance } from "../../common/utils/prettyCV"
+import { prettyBalance } from "../../common/utils/pretty"
 import { StacksMainnet } from "@stacks/network"
 import TokenSelector from "../token-selector"
 

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from "react"
 import { showConnect, UserData } from "@stacks/connect"
-import { prettyAddress } from "@/src/app/common/utils/prettyCV"
+import { prettyAddress } from "@/src/app/common/utils/pretty"
 import { useUser } from "@/src/app/contexts/UserProvider"
 import { connectWalletRecipe } from "./connect-wallet-recipe"
 import { styled } from "@/styled-system/jsx"

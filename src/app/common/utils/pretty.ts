@@ -45,3 +45,25 @@ export function prettyPrice(price: number | string) {
     return numericPrice.toString()
   }
 }
+
+export function prettyTimestamp(ts: number): string {
+  const date = new Date(ts)
+  const hours = date.getHours()
+  const minutes = "0" + date.getMinutes()
+  const seconds = "0" + date.getSeconds()
+  const day = date.getDate()
+  const month = date.toLocaleString("default", { month: "long" })
+
+  const formattedTime =
+    month +
+    " " +
+    day +
+    ", " +
+    hours +
+    ":" +
+    minutes.slice(-2) +
+    ":" +
+    seconds.slice(-2)
+
+  return formattedTime
+}
