@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "DCA",
   description:
-    "Dollar Cost Average (DCA) Crypto. Stx, Btc, memecoins and Runes."
+    "Dollar Cost Average (DCA), the most proitable way to buy Stx, Btc, memecoins and Runes."
 }
 
 export default function RootLayout({
