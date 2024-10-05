@@ -25,8 +25,6 @@ const InputAmount = ({
     <VStack
       gap={0}
       className={css({
-        textAlign: center ? "center" : ["center", "center", "right"],
-
         width: "100%"
       })}
     >
@@ -34,9 +32,10 @@ const InputAmount = ({
         htmlFor="total-amount"
         className={css({
           color: amount ? "white" : "lightcyan",
+          alignSelf: center ? "center" : ["center", "center", "flex-end"],
           fontWeight: "light",
           fontSize: "xl",
-          marginRight: "0.5rem"
+          marginRight: "0.25rem"
         })}
       >
         {name}
