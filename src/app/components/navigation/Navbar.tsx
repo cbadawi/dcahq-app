@@ -72,7 +72,7 @@ const Navbar = () => {
         </li>
         <li>
           <Link
-            href="/"
+            href="/strategies"
             className={css({
               color: "white",
               display: "flex",
