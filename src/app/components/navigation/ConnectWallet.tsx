@@ -22,6 +22,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
     if (userData) {
       userSession.signUserOut()
       setUserData(null)
+      window.location.reload()
       return
     }
 
