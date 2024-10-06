@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { memo, useState } from "react"
 import { css } from "@/styled-system/css"
 import { HStack } from "@/styled-system/jsx"
 import { Intervals } from "../../common/utils/helpers"
@@ -81,4 +81,4 @@ const IntervalButton = ({
   )
 }
 
-export default IntervalButton
+export default memo(IntervalButton)

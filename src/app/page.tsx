@@ -6,7 +6,7 @@ import { css } from "@/styled-system/css"
 export default function Home() {
   return (
     <VStack className={css({ pt: "10px" })}>
-      <VStack justifyContent="center" alignItems="center">
+      <VStack justifyContent="center" alignItems="center" maxWidth={"90%"}>
         <HeaderBanner>
           For everyone who has bought a token only to see its value plummet a
           few days later.

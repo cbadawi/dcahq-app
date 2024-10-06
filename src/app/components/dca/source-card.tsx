@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { memo, useEffect, useState } from "react"
 import { Flex, Box, VStack, HStack } from "@/styled-system/jsx"
 import { UserData } from "@stacks/connect"
 import { getBalance } from "@/src/app/common/functionCalls/getBalance"
@@ -54,6 +54,7 @@ const SourceCard = ({
   const [balance, setBalance] = useState<BigInt>(BigInt(0))
 
   useEffect(() => {
+    let active = true
     async function fetchBalance() {
       if (!user || !network) return
       const balance = await getBalance(
@@ -61,28 +62,42 @@ const SourceCard = ({
         user.profile.stxAddress.mainnet,
         network
       )
+      if (!active) return
       setBalance(balance)
+      console.log("source-card fetchBalance", {
+        balance,
+        sourceToken
+      })
     }
     fetchBalance()
     const newTargetTokens = getAvailableTargetTokens(targetTokens, sourceToken)
     setTargetToken(newTargetTokens[0])
     setTargetTokens(newTargetTokens)
+    return () => {
+      active = false
+    }
   }, [sourceToken.valueOf(), user])
 
   useEffect(() => {
     if (!totalAmount) return
+    let active = true
     async function fetchPrice() {
       if (!network) return
       const priceUsd = await getPriceUsd(sourceToken, network, stxPrice)
-      console.log("source-card", {
+      console.log("source-card fetchPrice", {
         stxPrice,
         totalAmount,
         priceUsd,
         sourceToken
       })
+      if (!active) return
       setSourceValueUsd(Number(totalAmount) * priceUsd)
     }
+
     fetchPrice()
+    return () => {
+      active = false
+    }
   }, [sourceToken.valueOf(), totalAmount, stxPrice])
 
   const sourceDetails = tokenMap[sourceToken]
@@ -143,4 +158,4 @@ const SourceCard = ({
   )
 }
 
-export default SourceCard
+export default memo(SourceCard)

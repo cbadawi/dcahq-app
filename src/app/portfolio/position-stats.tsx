@@ -1,4 +1,4 @@
-import { useRef, type ChangeEvent } from "react"
+import { memo, useRef, type ChangeEvent } from "react"
 import { StacksMainnet } from "@stacks/network"
 import React, { useEffect, useState } from "react"
 import {
@@ -8,7 +8,6 @@ import {
   Intervals,
   intervalSeconds,
   tokenMap,
-  Tokens,
   UserKey
 } from "../common/utils/helpers"
 import { getDcaData } from "../common/functionCalls/getDcaData"
@@ -26,7 +25,7 @@ import {
   getPriceRatioDisplay,
   isSourceANumerator
 } from "../common/utils/isSourceANumerator"
-import { Toggle } from "../components/toggle"
+import Toggle from "../components/toggle"
 import { connectWalletRecipe } from "../components/navigation/connect-wallet-recipe"
 import { setUserDcaData } from "../common/functionCalls/dca/setUserDcaData"
 import {
@@ -375,4 +374,4 @@ const PositionStats = ({
   )
 }
 
-export default PositionStats
+export default memo(PositionStats)
