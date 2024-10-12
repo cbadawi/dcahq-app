@@ -15,9 +15,10 @@ export function groupAndSumByToken(
     {} as { [token: string]: { value: number; amount: number } }
   )
 
-  return Object.keys(groupedData).map(token => ({
+  const grouped = Object.keys(groupedData).map(token => ({
     token,
     value: groupedData[token].value,
     amount: groupedData[token].amount
   }))
+  return grouped
 }

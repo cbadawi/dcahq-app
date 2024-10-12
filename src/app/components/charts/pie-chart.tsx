@@ -4,8 +4,7 @@ import { Pie } from "@visx/shape"
 import { Group } from "@visx/group"
 import { Text } from "@visx/text"
 import { colors, ValuePieChartData } from "../../common/utils/helpers"
-import { PieArcDatum } from "@visx/shape/lib/shapes/Pie"
-import { prettyPrice } from "../../common/utils/prettyCV"
+import { prettyBalance } from "../../common/utils/pretty"
 
 export interface PieChartProps {
   data: ValuePieChartData[]
@@ -40,7 +39,7 @@ export default function PieChart({
           outerRadius={half}
           innerRadius={({ data }) => {
             const activeSizeDelta =
-              active && active.token == data.token ? 32 : 16
+              active && active.token == data.token ? 24 : 16
             return half - activeSizeDelta
           }}
           padAngle={0.03}
@@ -59,14 +58,12 @@ export default function PieChart({
             })
           }}
         </Pie>
+
         {active ? (
           <>
-            <Text textAnchor="middle" fill="#fff" fontSize={20} dy={-15}>
-              {`${active.amount} ${active.token}`}
+            <Text textAnchor="middle" fill="#fff" fontSize={20} dy=".33em">
+              {`${prettyBalance(active.amount, 0)} ${active.token}`}
             </Text>
-            {/* <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={15}>
-              {`STX ${prettyPrice(active.value)}`}
-            </Text> */}
           </>
         ) : (
           <>
@@ -74,7 +71,10 @@ export default function PieChart({
               {data.length + ` ${name}` + (data.length == 1 ? "" : "s")}
             </Text>
             <Text textAnchor="middle" fill="#aaa" fontSize={20} dy={15}>
-              {`${Math.floor(data.reduce((acc, d) => acc + d["value"], 0))}Ӿ`}
+              {`${prettyBalance(
+                data.reduce((acc, d) => acc + d["value"], 0),
+                0
+              )}Ӿ`}
             </Text>
           </>
         )}

@@ -42,11 +42,17 @@ import { reducePosition } from "../common/functionCalls/dca/reducePosition"
 const PositionStats = ({
   address,
   network,
-  userKey
+  userKey,
+  onDcaDataFetching
 }: {
   address: string
   network: StacksMainnet
   userKey: UserKey
+  onDcaDataFetching?: (
+    data: DcaData,
+    sourceValue: number,
+    targetValue: number
+  ) => void
 }) => {
   const [dcaData, setDcaData] = useState<DcaData | null>(null)
   const [isPaused, setIsPaused] = useState(false)
@@ -95,8 +101,8 @@ const PositionStats = ({
 
         const relativePrice = sourcePrice / targetPrice
         setRelativePrice(relativePrice)
-        // if (onDcaDataFetching)
-        // onDcaDataFetching(dcaData, sourcePrice, targetPrice)
+        if (onDcaDataFetching)
+          onDcaDataFetching(dcaData, sourcePrice, targetPrice)
 
         console.log("position-stats", {
           source: userKey.source,
