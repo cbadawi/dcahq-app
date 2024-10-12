@@ -1,6 +1,6 @@
 import { cva } from "@/styled-system/css"
 import { styled } from "@/styled-system/jsx"
-import { type ChangeEvent, useState } from "react"
+import { type ChangeEvent, memo, useState } from "react"
 
 const toggleRecipe = cva({
   base: {
@@ -61,7 +61,7 @@ const toggleRecipe = cva({
 
 const ToggleSwitch = styled("label", toggleRecipe)
 
-export function Toggle({
+function Toggle({
   inputValue,
   handleSelection,
   getInitialState = () => false
@@ -90,3 +90,5 @@ export function Toggle({
     </ToggleSwitch>
   )
 }
+
+export default memo(Toggle)

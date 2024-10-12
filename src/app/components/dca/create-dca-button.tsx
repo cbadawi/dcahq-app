@@ -1,5 +1,5 @@
 import { StacksMainnet } from "@stacks/network"
-import React, { useState } from "react"
+import React, { memo, useState } from "react"
 import { css } from "@/styled-system/css"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -79,4 +79,4 @@ const CreateDcaButton = ({
   )
 }
 
-export default CreateDcaButton
+export default memo(CreateDcaButton)

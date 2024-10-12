@@ -33,7 +33,7 @@ const ConnectWallet: React.FC<ConnectWalletProps> = ({
         window.location.reload()
       },
       onCancel: () => {
-        console.log("oops")
+        console.log("tx canceled oops")
       },
       userSession
     })

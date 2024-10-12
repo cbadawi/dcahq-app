@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { Flex, Box, VStack, HStack } from "@/styled-system/jsx"
 import { UserData } from "@stacks/connect"
 import { useUser } from "@/src/app/contexts/UserProvider"
 import ArrowSeperator from "./arrow-seperator"
-import SourceComponent from "./source-card"
-import TargetComponent from "./target-card"
+import SourceCard from "./source-card"
+import TargetCard from "./target-card"
 import {
   Intervals,
   maxUint128,
@@ -36,16 +36,9 @@ const DcaCard = () => {
   const [selectedInterval, setSelectedInterval] = useState<Intervals>(
     Intervals.hours2
   )
-  const [network, setNetwork] = useState<StacksMainnet | null>(null)
+  const [network] = useState<StacksMainnet>(new StacksMainnet())
   const [targetPrice, setTargetPrice] = useState(0)
-  const [stxPrice, setStxPrice] = useState(1)
-
-  useEffect(() => {
-    if (!userSession?.isUserSignedIn()) return
-    setUser(userSession?.loadUserData())
-    const mainnet = new StacksMainnet()
-    setNetwork(mainnet)
-  }, [])
+  const [stxPrice, setStxPrice] = useState(0)
 
   const resetHandlerPostDca = () => {
     setMinPrice("0")
@@ -56,8 +49,13 @@ const DcaCard = () => {
   }
 
   useEffect(() => {
-    const setStx = async () => {
-      if (!network) return
+    if (!userSession?.isUserSignedIn()) return
+    setUser(userSession?.loadUserData())
+
+    let active = true
+    getStxPrice()
+
+    async function getStxPrice() {
       const price = await getPriceAlex({
         network,
         tokenX: Tokens.ASTX,
@@ -65,10 +63,15 @@ const DcaCard = () => {
         decimal: tokenMap[Tokens.ASTX].decimal,
         factor: defaultFactor
       })
+      if (!active) return
       setStxPrice(price)
     }
-    setStx()
-  }, [network])
+
+    return () => {
+      active = false
+    }
+  }, [])
+
   return (
     <Flex justifyContent="center">
       <Box
@@ -87,7 +90,7 @@ const DcaCard = () => {
           </Box>
         </Flex>
         <Flex direction="column">
-          <SourceComponent
+          <SourceCard
             network={network}
             user={user}
             stxPrice={stxPrice}
@@ -112,7 +115,7 @@ const DcaCard = () => {
               <ArrowSeperator />
             </Flex>
           </Flex>
-          <TargetComponent
+          <TargetCard
             sourceToken={sourceToken}
             targetTokens={targetTokensOptions}
             network={network}

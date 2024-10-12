@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { memo, useEffect, useState } from "react"
 import { Box, Flex, VStack } from "@/styled-system/jsx"
 import { tokenMap, Tokens } from "@/src/app/common/utils/helpers"
 import { css } from "@/styled-system/css"
@@ -15,7 +15,7 @@ interface TargetComponentProps {
   targetPrice: number
   setTargetPrice: (price: number) => void
   sourceValueUsd: number
-  network: StacksMainnet | null
+  network: StacksMainnet
   setTargetToken: (token: Tokens) => void
 }
 
@@ -33,16 +33,25 @@ const TargetCard: React.FC<TargetComponentProps> = ({
   const [targetAmount, setTargetAmount] = useState(0)
 
   useEffect(() => {
+    let active = true
+    if (!stxPrice) return
     const setAmount = async () => {
-      if (!network) return
       const priceUsd = await getPriceUsd(targetToken, network, stxPrice)
+      console.log("target-card getPriceUsd", {
+        priceUsd,
+        targetToken,
+        stxPrice
+      })
+      if (!active) return
       setTargetPrice(priceUsd)
     }
     setAmount()
-  }, [network, targetToken, stxPrice])
+    return () => {
+      active = false
+    }
+  }, [targetToken, stxPrice])
 
   useEffect(() => {
-    if (!network) return
     const amount = sourceValueUsd / targetPrice
     console.log("target-card setAmount", {
       sourceValueUsd,
@@ -96,4 +105,4 @@ const TargetCard: React.FC<TargetComponentProps> = ({
   )
 }
 
-export default TargetCard
+export default memo(TargetCard)
